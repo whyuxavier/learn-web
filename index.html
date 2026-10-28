@@ -6,8 +6,8 @@
 <title>Веб-програмування</title>
 <link href="https://fonts.cdnfonts.com/css/fixel-display" rel="stylesheet">
 <style>
-:root{--bg:#f4f3f8;--bg2:#e9eef7;--sf:rgba(255,255,255,.72);--sf2:#fbfaff;--tx:#23232e;--mu:#6b6b7d;--bd:rgba(60,60,90,.13);--ac:#8b7fd0;--ac2:#7ea6d8;--mint:#8fd1bd;--ed:#fcfcff;--sh:0 4px 18px rgba(60,60,100,.08);--ok:#4fae93}
-[data-theme=dark]{--bg:#1c1d22;--bg2:#202228;--sf:rgba(40,42,50,.75);--sf2:#2a2c34;--tx:#e6e6ee;--mu:#9a9bab;--bd:rgba(255,255,255,.1);--ac:#a597e6;--ac2:#7fa8e0;--mint:#6fcbb8;--ed:#1f2025;--sh:0 4px 18px rgba(0,0,0,.3);--ok:#6fcbb8}
+:root{--bg:#f4f3f8;--bg2:#e9eef7;--sf:rgba(255,255,255,.72);--sf2:#fbfaff;--tx:#23232e;--mu:#6b6b7d;--bd:rgba(60,60,90,.13);--ac:#8b7fd0;--ac2:#7ea6d8;--mint:#8fd1bd;--ed:#fcfcff;--sh:0 4px 18px rgba(60,60,100,.08);--ok:#4fae93;--sb:rgba(110,100,160,.35)}
+[data-theme=dark]{--bg:#1c1d22;--bg2:#202228;--sf:rgba(40,42,50,.75);--sf2:#2a2c34;--tx:#e6e6ee;--mu:#9a9bab;--bd:rgba(255,255,255,.1);--ac:#a597e6;--ac2:#7fa8e0;--mint:#6fcbb8;--ed:#1f2025;--sh:0 4px 18px rgba(0,0,0,.3);--ok:#6fcbb8;--sb:rgba(200,200,230,.25)}
 *{box-sizing:border-box}
 html,body{margin:0;height:100%}
 body{font-family:"Fixel Display","Fixel Variable",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:16px;line-height:1.6;color:var(--tx);background:linear-gradient(135deg,var(--bg),var(--bg2));transition:background .3s,color .3s;overflow-x:hidden}
@@ -34,7 +34,7 @@ aside{background:var(--sf);backdrop-filter:blur(12px);border-right:1px solid var
 .li b{width:18px;height:18px;flex:none;border-radius:50%;border:1.5px solid var(--bd);display:grid;place-items:center}
 .li.d b{background:var(--ok);border-color:var(--ok);color:#fff}
 .li b svg{width:11px;height:11px;stroke-width:3;opacity:0}.li.d b svg{opacity:1}
-main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:16px;padding:16px;overflow:hidden;min-height:0}
+main{display:grid;grid-template-columns:var(--lc,minmax(0,1fr)) 10px minmax(0,1.1fr);gap:6px;padding:16px;overflow:hidden;min-height:0}
 .col{overflow:auto;min-height:0;display:flex;flex-direction:column;gap:14px}
 .card{background:var(--sf);backdrop-filter:blur(10px);border:1px solid var(--bd);border-radius:16px;box-shadow:var(--sh);padding:16px 18px}
 .card h2{font-size:15px;margin:0 0 8px;color:var(--ac)}
@@ -72,9 +72,9 @@ pre code{background:none;padding:0}
 .cmd{display:flex;gap:12px;align-items:baseline;padding:7px 0;border-top:1px solid var(--bd)}
 .cmd:first-of-type{border-top:0}.cmd code{flex:0 0 40%;white-space:normal;word-break:break-word}.cmd span{flex:1;font-size:14px}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:grid;place-items:center;z-index:60;padding:16px}
-.modal[hidden]{display:none}.mc{max-width:440px;width:100%;background:var(--sf2)}
+.modal[hidden]{display:none}.mc{max-width:440px;width:100%;background:var(--sf2);position:relative}.mx{position:absolute;top:10px;right:10px;width:32px;height:32px;min-height:32px}.mc h2{padding-right:36px}
 .mc a{color:var(--ac)}.mc .btn{margin-top:6px}
-@media(min-width:1101px){.app.noside{grid-template-columns:1fr}.app.noside aside{display:none}.app.noside main{grid-column:1}main.nol{grid-template-columns:minmax(0,260px) minmax(0,1fr)}}
+@media(min-width:1101px){.app.noside{grid-template-columns:1fr}.app.noside aside{display:none}.app.noside main{grid-column:1}main.nol{grid-template-columns:minmax(0,260px) 10px minmax(0,1fr)}}
 iframe{flex:1;border:0;background:transparent;width:100%;min-height:0}
 #toast{position:fixed;bottom:22px;left:50%;transform:translate(-50%,20px);background:var(--tx);color:var(--bg);padding:9px 18px;border-radius:10px;opacity:0;transition:.25s;pointer-events:none;z-index:50}
 #toast.on{opacity:1;transform:translate(-50%,0)}
@@ -84,11 +84,26 @@ iframe{flex:1;border:0;background:transparent;width:100%;min-height:0}
  #menu{display:grid}
  aside{position:fixed;top:56px;bottom:0;left:0;width:290px;max-width:85vw;z-index:30;transform:translateX(-100%);box-shadow:var(--sh)}
  aside.open{transform:none}
- main{grid-template-columns:1fr;overflow:visible}
+ main{grid-template-columns:1fr;overflow:visible;gap:16px}.rz{display:none}
  .col{overflow:visible}.ws{height:auto}
  .ed{height:300px;flex:none}iframe{height:340px;flex:none}.pane{flex:none}
 }
 @media(max-width:520px){header h1 small{display:none}.card{padding:14px}.cmd{flex-direction:column;gap:2px}.cmd code{flex:none}}
+
+*{scrollbar-width:thin;scrollbar-color:var(--sb) transparent}
+::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-corner{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--sb);border-radius:10px;border:2px solid transparent;background-clip:padding-box}::-webkit-scrollbar-thumb:hover{background:var(--ac);background-clip:padding-box;border:2px solid transparent}
+.rz{cursor:col-resize;position:relative;touch-action:none;border-radius:6px}
+.rz::after{content:"";position:absolute;left:3px;top:50%;height:48px;width:4px;margin-top:-24px;border-radius:4px;background:var(--bd)}
+.rz:hover::after,.rz:focus-visible::after,.drag .rz::after{background:var(--ac)}
+body.drag{user-select:none;cursor:col-resize}.drag iframe{pointer-events:none}
+.lks{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.lk{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border:1px solid var(--bd);border-radius:12px;background:var(--sf2);color:inherit;text-decoration:none}
+.lk:hover{border-color:var(--ac)}.lk span{font-size:13px;color:var(--mu)}
+#bg{width:100%;height:auto;display:block;border-radius:12px;background:var(--ed);border:1px solid var(--bd);touch-action:none;cursor:crosshair}
+.bar{display:flex;align-items:center;justify-content:space-between;margin-top:8px;gap:8px}
+.li.bn b{border-color:var(--ac);color:var(--ac)}.li.bn b svg{opacity:1}
+main.bonus{grid-template-columns:minmax(0,1fr)}.bonus .rz,.bonus .ws{display:none}
 </style>
 </head>
 <body>
@@ -105,7 +120,8 @@ iframe{flex:1;border:0;background:transparent;width:100%;min-height:0}
  <nav id="nav"></nav>
 </aside>
 <main>
- <section class="col" id="lw" aria-label="Урок"><div class="card lh"><h2>Теорія та завдання</h2><button class="ib cv" data-k="lw" aria-label="Згорнути" aria-expanded="true"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button></div><div id="lesson"></div></section>
+ <section class="col" id="lw" aria-label="Урок"><div class="card lh"><h2 id="lht">Теорія та завдання</h2><button class="ib cv" data-k="lw" aria-label="Згорнути" aria-expanded="true"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button></div><div id="lesson"></div></section>
+ <div class="rz" id="rz" role="separator" aria-orientation="vertical" aria-label="Змінити ширину панелей" tabindex="0"></div>
  <section class="ws" aria-label="Робоча область">
   <div class="pane" id="p-ed">
    <div class="ph">
@@ -129,11 +145,11 @@ iframe{flex:1;border:0;background:transparent;width:100%;min-height:0}
 </main>
 </div>
 <div class="modal" id="modal" hidden role="dialog" aria-modal="true" aria-labelledby="mt"><div class="card mc">
+<button class="ib mx" id="mclose" aria-label="Закрити"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
 <h2 id="mt">Про курс</h2>
 <p>Веб-курс з основ вебпрограмування (HTML, CSS, JavaScript) для учнів середніх і старших класів.</p>
 <p>Для поглибленого вивчення теорії: <a href="https://it-osvita.diia.gov.ua/task/item/e79f37cc-9c36-4935-9fdb-439a98d9c485" target="_blank" rel="noopener noreferrer">курс із веброзробки на платформі ІТ-студії Дія</a>.</p>
-<p>Автор сайту: <a href="https://github.com/whyuxavier" target="_blank" rel="noopener noreferrer">GitHub — whyuxavier</a></p>
-<button class="btn pr" id="mclose">Закрити</button></div></div>
+<p>Автор сайту: <a href="https://github.com/whyuxavier" target="_blank" rel="noopener noreferrer">GitHub — whyuxavier</a></p></div></div>
 <div id="toast" role="status" aria-live="polite"></div>
 <script>
 'use strict';
@@ -144,7 +160,7 @@ const MOD_OF=[0,0,0,1,1,1,1,2,2,2,2,2];
 
 const LESSONS=[
 {t:'Знайомство з вебсередовищем. Перша вебсторінка',
- th:"<p><b>HTML</b> (HyperText Markup Language) — мова розмітки, що описує <i>зміст</i> сторінки: заголовки, абзаци, списки. <b>CSS</b> відповідає за вигляд сторінки, а <b>JavaScript</b> — за її поведінку.</p><p><b>Tag (укр. тег)</b> — службове слово в кутових дужках. Більшість тегів парні: є відкривальний і закривальний. Кожен HTML-документ має однакову основу: у частині <b>head</b> зберігається службова інформація, а в <b>body</b> — усе, що бачить користувач.</p>",cm:[["<!DOCTYPE html>", "Повідомляє браузеру, що це документ HTML5."], ["<html lang=\"uk\">", "Кореневий елемент; lang задає мову сторінки."], ["<head>", "Службова інформація: кодування, назва вкладки."], ["<title>", "Назва сторінки на вкладці браузера."], ["<body>", "Видимий вміст сторінки."], ["<h1> … <h6>", "Заголовки: від найважливішого до найменшого."], ["<p>", "Абзац тексту."], ["<strong>", "Важливий текст, зазвичай напівжирний."], ["<br>", "Перенесення рядка; закривального тега немає."]],
+ th:"<p><b>HTML</b> (HyperText Markup Language) — мова розмітки, що описує <i>зміст</i> сторінки: заголовки, абзаци, списки. <b>CSS</b> відповідає за вигляд сторінки, а <b>JavaScript</b> — за її поведінку.</p><p><b>Тег</b> — службове слово в кутових дужках. Більшість тегів парні: є відкривальний і закривальний. Кожен HTML-документ має однакову основу: у частині <b>head</b> зберігається службова інформація, а в <b>body</b> — усе, що бачить користувач.</p>",cm:[["<!DOCTYPE html>", "Повідомляє браузеру, що це документ HTML5."], ["<html lang=\"uk\">", "Кореневий елемент; lang задає мову сторінки."], ["<head>", "Службова інформація: кодування, назва вкладки."], ["<title>", "Назва сторінки на вкладці браузера."], ["<body>", "Видимий вміст сторінки."], ["<h1> … <h6>", "Заголовки: від найважливішого до найменшого."], ["<p>", "Абзац тексту."], ["<strong>", "Важливий текст, зазвичай напівжирний."], ["<br>", "Перенесення рядка; закривального тега немає."]],
  ex:`<body>
     <h1>Мій заголовок</h1>
     <p>Звичайний абзац із <strong>важливою</strong> фразою.</p>
@@ -223,7 +239,7 @@ h1 {
  task:'Створи охайну картку товару або профілю.',
  ok:['Задана ширина, padding, border і border-radius.','Картка по центру (margin: auto).','Тінь (box-shadow).','Використано box-sizing.'],
  h:D('Картка','    <div class="card">\n        <h2>Назва</h2>\n        <p>Короткий опис товару або людини.</p>\n        <span class="price">199 грн</span>\n    </div>'),
- c:'* {\n    box-sizing: border-box;\n}\n\nbody {\n    font-family: sans-serif;\n    background: #eef1fa;\n}\n\n.card {\n    \n}',j:''},
+ c:'* {\n    box-sizing: border-box;\n}\n\nbody {\n    font-family: sans-serif;\n}\n\n.card {\n    \n}',j:''},
 
 {t:'Сучасне компонування: Flexbox',
  th:"<p><b>Flexbox</b> — сучасна модель компонування: контейнер розташовує дочірні елементи вздовж <b>головної осі</b> (за замовчуванням горизонтальної), а перпендикулярна до неї — <b>поперечна вісь</b>.</p>",cm:[["display: flex", "Робить елемент гнучким контейнером."], ["justify-content", "Вирівнювання вздовж головної осі."], ["align-items", "Вирівнювання вздовж поперечної осі."], ["flex-wrap: wrap", "Дозволяє переносити елементи на новий рядок."], ["gap", "Проміжок між елементами."], ["flex: 1 1 200px", "Як елемент росте, стискається та яка його базова ширина."]],
@@ -240,7 +256,7 @@ h1 {
  task:'Створи адаптивну галерею карток проєктів.',
  ok:['Контейнер із display: flex і gap.','Не менше 4 карток.','Картки переносяться на новий рядок при звуженні вікна.'],
  h:D('Галерея','    <h1>Мої проєкти</h1>\n    <div class="gallery">\n        <div class="item">Проєкт 1</div>\n        <div class="item">Проєкт 2</div>\n        <div class="item">Проєкт 3</div>\n    </div>'),
- c:'body {\n    font-family: sans-serif;\n    padding: 16px;\n}\n\n.gallery {\n    \n}\n\n.item {\n    padding: 24px;\n    background: #e3e0f7;\n    border-radius: 12px;\n}',j:''},
+ c:'body {\n    font-family: sans-serif;\n    padding: 16px;\n}\n\n.gallery {\n    \n}\n\n.item {\n    padding: 24px;\n    background: rgba(139, 127, 208, 0.25);\n    border-radius: 12px;\n}',j:''},
 
 {t:'CSS-анімації, переходи та адаптивність',
  th:"<p><b>Перехід</b> (transition) робить зміну стилю плавною. <b>Анімація</b> описує кілька кадрів. <b>Адаптивність</b> — здатність сторінки підлаштовуватись під розмір екрана; для цього використовують <b>медіазапити</b>.</p>",cm:[["transition: transform .2s", "Плавна зміна властивості за 0,2 с."], ["transform: scale(1.1)", "Зміна масштабу, також translate, rotate."], [":hover", "Стан при наведенні курсора."], ["@keyframes назва { }", "Опис кадрів анімації."], ["animation: назва 2s infinite", "Запуск анімації."], ["@media (max-width: 768px) { }", "Стилі лише для екранів вужчих за 768 px."]],
@@ -262,7 +278,7 @@ h1 {
  task:'Створи анімовану кнопку заклику до дії та адаптуй галерею для мобільних екранів.',
  ok:['Кнопка змінюється при наведенні (transition + transform).','Є анімація @keyframes.','Є @media (max-width: 768px), що змінює макет.'],
  h:D('Анімація','    <button class="cta">Приєднатися</button>\n    <div class="gallery">\n        <div class="item">1</div>\n        <div class="item">2</div>\n        <div class="item">3</div>\n    </div>'),
- c:'body {\n    font-family: sans-serif;\n    padding: 16px;\n}\n\n.cta {\n    padding: 12px 28px;\n    border: 0;\n    border-radius: 10px;\n    background: #8b7fd0;\n    color: white;\n}\n\n.gallery {\n    display: flex;\n    gap: 12px;\n    margin-top: 20px;\n}\n\n.item {\n    flex: 1;\n    padding: 24px;\n    background: #e3e0f7;\n}\n\n/* Додай :hover, @keyframes та @media */',j:''},
+ c:'body {\n    font-family: sans-serif;\n    padding: 16px;\n}\n\n.cta {\n    padding: 12px 28px;\n    border: 0;\n    border-radius: 10px;\n    background: #8b7fd0;\n    color: white;\n}\n\n.gallery {\n    display: flex;\n    gap: 12px;\n    margin-top: 20px;\n}\n\n.item {\n    flex: 1;\n    padding: 24px;\n    background: rgba(139, 127, 208, 0.25);\n}\n\n/* Додай :hover, @keyframes та @media */',j:''},
 
 {t:'Змінні, типи даних та взаємодія з користувачем',
  th:"<p><b>Змінна</b> — іменована комірка пам'яті. <b>Тип даних</b> визначає, що в ній зберігається: текст (string), число (number) чи логічне значення (boolean).</p><p><b>DOM</b> — «дерево» елементів сторінки, яким керує JavaScript. Через нього скрипт змінює вміст сторінки.</p>",cm:[["let x = 5", "Змінна, значення якої можна змінювати."], ["const name = \"Оля\"", "Стала: значення не змінюється."], ["console.log(x)", "Вивід у консоль браузера."], ["alert(\"текст\")", "Повідомлення у вікні."], ["prompt(\"Питання\")", "Запит тексту в користувача."], ["document.querySelector(\"#id\")", "Пошук елемента на сторінці."], ["elem.textContent = \"…\"", "Змінити текст елемента."], ["elem.innerHTML = \"…\"", "Змінити вміст як HTML."]],
@@ -345,7 +361,7 @@ const store={
  del(k){try{localStorage.removeItem(K+k)}catch(e){}}
 };
 let cur=store.get('cur',0),lang='h',done=store.get('done',[]);
-if(!(cur>=0&&cur<12))cur=0;
+if(!(cur>=0&&cur<=12))cur=0;
 const $=s=>document.querySelector(s);
 const ta=$('#ta'),gut=$('#gut'),pv=$('#pv'),hl=$('#hl');
 const ICON={moon:'<svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>',sun:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>'};
@@ -437,9 +453,10 @@ function before(html,tag,add){const i=html.toLowerCase().lastIndexOf(tag);return
 function themeBase(){
  const d=document.documentElement.dataset.theme==='dark';
  const bg=d?'#1f2025':'#fcfcff',tx=d?'#e6e6ee':'#23232e',ln=d?'#a597e6':'#5b4bb7';
- return '<style>/* тема за замовчуванням: перекривається стилями учня */\n:where(:root){color-scheme:'+(d?'dark':'light')+'}\n:where(body){background:'+bg+';color:'+tx+';font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.5}\n:where(a){color:'+ln+'}\n</style>\n';
+ return '<style>/* тема за замовчуванням: перекривається стилями учня */\n:where(:root){color-scheme:'+(d?'dark':'light')+';scrollbar-color:'+(d?'#555a66':'#c3c0d8')+' transparent}\n:where(body){background:'+bg+';color:'+tx+';font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.5}\n:where(a){color:'+ln+'}\n</style>\n';
 }
 function preview(){
+ if(cur>11)return;
  let h=getCode(cur,'h');const c=getCode(cur,'c'),j=getCode(cur,'j');
  h=before(h,'</head>',themeBase()+'<style>\n'+c.replace(/<\/style/gi,'<\\/style')+'\n</style>\n');
  h=before(h,'</body>','<script>\ntry {\n'+j.replace(/<\/script/gi,'<\\/script')+'\n} catch (e) { document.body.insertAdjacentHTML("beforeend", "<pre style=\\"color:#c0392b\\">Помилка: " + e.message + "</pre>"); }\n<\/script>\n');
@@ -458,6 +475,58 @@ $('#copy').onclick=()=>tryCopy(ta.value);
 $('#reset').onclick=()=>{store.del(codeKey(cur,lang));loadEditor();preview();toast('Код скинуто')};
 $('#tabs').onclick=e=>{const b=e.target.closest('.tab');if(b){lang=b.dataset.l;loadEditor()}};
 
+
+/* ---------- бонус ---------- */
+const STAR='<svg viewBox="0 0 24 24"><path d="M12 3l2.8 5.8 6.2.9-4.5 4.4 1.1 6.2L12 17.3 6.4 20.3l1.1-6.2L3 9.7l6.2-.9z"/></svg>';
+const YT=q=>'https://www.youtube.com/results?search_query='+encodeURIComponent(q);
+const TOOLS=[
+ ['https://code.visualstudio.com/','Visual Studio Code','Безкоштовний редактор коду'],
+ ['https://developer.mozilla.org/uk/','MDN Web Docs','Довідник з HTML, CSS, JS (українською)'],
+ ['https://uk.javascript.info/','Сучасний підручник JavaScript','Українською, з прикладами'],
+ ['https://codepen.io/','CodePen','Онлайн-пісочниця для вебекспериментів'],
+ ['https://jsfiddle.net/','JSFiddle','Швидкі тести HTML/CSS/JS'],
+ ['https://caniuse.com/','Can I use','Підтримка можливостей у браузерах'],
+ ['https://flexboxfroggy.com/#uk','Flexbox Froggy','Гра для вивчення Flexbox'],
+ ['https://flukeout.github.io/','CSS Diner','Гра для вивчення CSS-селекторів'],
+ ['https://fonts.google.com/','Google Fonts','Безкоштовні шрифти'],
+ ['https://coolors.co/','Coolors','Генератор палітр'],
+ ['https://www.figma.com/','Figma','Дизайн інтерфейсів'],
+ ['https://github.com/','GitHub','Зберігання коду та публікація сайтів']];
+const VIDEO=[
+ ['https://www.youtube.com/c/CodeUA/videos','Канал CodeUA','Уроки HTML5 та CSS3 українською'],
+ [YT('ITVDN HTML CSS українською'),'ITVDN: HTML & CSS','Відеокурс українською'],
+ [YT('ITVDN JavaScript Стартовий'),'ITVDN: JavaScript Стартовий','Основи JavaScript українською'],
+ [YT('HTML CSS JavaScript з нуля українською'),'Пошук: курси з нуля','Добірка відео українською']];
+const LNK=a=>a.map(x=>'<a class="lk" href="'+x[0]+'" target="_blank" rel="noopener noreferrer"><b>'+esc(x[1])+'</b><span>'+esc(x[2])+'</span></a>').join('');
+function bonusHtml(){
+ return '<div class="card"><h2>Інструменти веброзробника</h2><div class="lks">'+LNK(TOOLS)+'</div></div>'+
+ '<div class="card"><h2>Безкоштовні відеокурси на YouTube</h2><div class="lks">'+LNK(VIDEO)+'</div></div>'+
+ '<div class="card"><h2>Що можна створити</h2><p>Ця міні-гра написана лише на HTML, CSS і JavaScript. Лови зірки — клікай або торкайся.</p><canvas id="bg" width="640" height="340" aria-label="Міні-гра: лови зірки"></canvas><div class="bar"><b id="bsc">Зловлено: 0</b><button class="btn" id="bre">Спочатку</button></div></div>';
+}
+function bonusGame(){
+ const cv=$('#bg'),x=cv.getContext('2d'),out=$('#bsc'),W=cv.width,H=cv.height;
+ let score=0,st=[],ps=[],last=0,n=0;
+ const cs=getComputedStyle(document.documentElement),C=[cs.getPropertyValue('--ac').trim()||'#8b7fd0',cs.getPropertyValue('--ac2').trim()||'#7ea6d8',cs.getPropertyValue('--mint').trim()||'#8fd1bd'];
+ cv.onpointerdown=e=>{
+  const b=cv.getBoundingClientRect(),mx=(e.clientX-b.left)*W/b.width,my=(e.clientY-b.top)*H/b.height;
+  for(let i=st.length-1;i>=0;i--){const q=st[i];
+   if(Math.hypot(q.x-mx,q.y-my)<q.r+8){st.splice(i,1);score++;out.textContent='Зловлено: '+score;
+    for(let k=0;k<12;k++)ps.push({x:q.x,y:q.y,vx:(Math.random()-.5)*5,vy:(Math.random()-.5)*5,l:1,c:q.c});break}}
+ };
+ $('#bre').onclick=()=>{score=0;st=[];ps=[];out.textContent='Зловлено: 0'};
+ function loop(t){
+  if(!cv.isConnected)return;
+  if(t-last>650){last=t;st.push({x:30+Math.random()*(W-60),y:-20,r:14+Math.random()*10,v:.8+Math.random()*1.4,c:C[n++%3]})}
+  x.clearRect(0,0,W,H);
+  st=st.filter(q=>(q.y+=q.v)<H+30);
+  st.forEach(q=>{x.globalAlpha=.9;x.fillStyle=q.c;x.beginPath();x.arc(q.x,q.y,q.r,0,6.283);x.fill()});
+  ps=ps.filter(p=>(p.l-=.03)>0);
+  ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;x.globalAlpha=p.l;x.fillStyle=p.c;x.fillRect(p.x,p.y,4,4)});
+  x.globalAlpha=1;requestAnimationFrame(loop);
+ }
+ requestAnimationFrame(loop);
+}
+
 /* ---------- інтерфейс уроків ---------- */
 function renderNav(){
  let h='',last=-1;
@@ -465,12 +534,14 @@ function renderNav(){
   if(MOD_OF[i]!==last){last=MOD_OF[i];h+='<div class="mod">'+MODS[last]+'</div>'}
   h+='<button class="li'+(done.includes(i)?' d':'')+'" data-i="'+i+'" aria-current="'+(i===cur)+'"><b>'+CHECK+'</b><span>Урок '+(i+1)+'. '+esc(l.t.split('.')[0])+'</span></button>';
  });
+ h+='<div class="mod">Бонус</div><button class="li bn" data-i="12" aria-current="'+(cur===12)+'"><b>'+STAR+'</b><span>Бонус</span></button>';
  $('#nav').innerHTML=h;
  const p=Math.round(done.length/12*100);
  $('#pct').textContent=p+'%';$('#cnt').textContent=done.length+' / 12';
  $('#pbar').firstElementChild.style.width=p+'%';$('#pbar').setAttribute('aria-valuenow',p);
 }
 function renderLesson(){
+ if(cur===12){$('#lesson').innerHTML=bonusHtml()+'<div class="nav"><button class="btn" id="prev">← Назад</button></div>';$('#lw').scrollTop=0;$('#prev').onclick=()=>go(11);bonusGame();return}
  const l=LESSONS[cur],d=done.includes(cur);
  $('#lesson').innerHTML=
  '<div class="card"><h2 class="t">Урок '+(cur+1)+'. '+esc(l.t)+'</h2></div>'+
@@ -481,13 +552,13 @@ function renderLesson(){
  (cur===0?'<button class="btn pr" id="cpbp">Копіювати HTML-структуру</button>':'')+'</div>'+
  '<div class="nav"><button class="btn" id="prev"'+(cur?'':' disabled')+'>← Назад</button><span class="sp"></span>'+
  '<button class="btn'+(d?' done':'')+'" id="mark" aria-pressed="'+d+'">'+(d?'Виконано':'Позначити виконаним')+'</button>'+
- '<button class="btn pr" id="next"'+(cur<11?'':' disabled')+'>Далі →</button></div>';
+ '<button class="btn pr" id="next"'+''+'>Далі →</button></div>';
  $('#lw').scrollTop=0;
  $('#prev').onclick=()=>go(cur-1);$('#next').onclick=()=>go(cur+1);
  $('#mark').onclick=()=>{done=done.includes(cur)?done.filter(x=>x!==cur):done.concat(cur);store.set('done',done);renderNav();renderLesson();toast(done.includes(cur)?'Урок завершено':'Позначку знято')};
  if(cur===0)$('#cpbp').onclick=()=>copyText(BP).then(()=>toast('Структуру скопійовано'),()=>toast('Не вдалося скопіювати'));
 }
-function go(i){if(i<0||i>11)return;cur=i;store.set('cur',i);lang='h';renderNav();renderLesson();loadEditor();preview();closeMenu();window.scrollTo(0,0)}
+function go(i){if(i<0||i>12)return;cur=i;store.set('cur',i);lang='h';const b=i===12;$('main').classList.toggle('bonus',b);$('#lht').textContent=b?'Бонус':'Теорія та завдання';renderNav();renderLesson();if(!b){loadEditor();preview()}closeMenu();window.scrollTo(0,0)}
 $('#nav').onclick=e=>{const b=e.target.closest('.li');if(b)go(+b.dataset.i)};
 function closeMenu(){$('#side').classList.remove('open');$('#menu').setAttribute('aria-expanded','false')}
 const ui=store.get('ui',{});
@@ -507,9 +578,19 @@ $('#menu').onclick=()=>{
 const modal=$('#modal');
 function openInfo(){modal.hidden=false;$('#mclose').focus()}
 function closeInfo(){modal.hidden=true;$('#info').focus()}
+const rz=$('#rz'),mainEl=$('main');
+function setLc(w){const m=mainEl.getBoundingClientRect().width-32-10-12-340;w=Math.max(280,Math.min(w,m));mainEl.style.setProperty('--lc',w+'px');ui.lc=w}
+rz.onpointerdown=e=>{
+ rz.setPointerCapture(e.pointerId);document.body.classList.add('drag');
+ const mv=ev=>setLc(ev.clientX-mainEl.getBoundingClientRect().left-19);
+ const up=()=>{rz.removeEventListener('pointermove',mv);rz.removeEventListener('pointerup',up);document.body.classList.remove('drag');store.set('ui',ui)};
+ rz.addEventListener('pointermove',mv);rz.addEventListener('pointerup',up);
+};
+rz.onkeydown=e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();setLc($('#lw').getBoundingClientRect().width+(e.key==='ArrowRight'?24:-24));store.set('ui',ui)}};
+rz.ondblclick=()=>{mainEl.style.removeProperty('--lc');delete ui.lc;store.set('ui',ui)};
 $('#info').onclick=openInfo;$('#mclose').onclick=closeInfo;modal.onclick=e=>{if(e.target===modal)closeInfo()};
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeMenu();if(!modal.hidden)closeInfo()}});
-applyUI();renderNav();renderLesson();loadEditor();preview();
+applyUI();if(ui.lc)setLc(ui.lc);go(cur);
 </script>
 </body>
 </html>
