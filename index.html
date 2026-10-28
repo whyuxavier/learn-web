@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Веб-програмування</title>
+<link href="https://fonts.cdnfonts.com/css/fixel-display" rel="stylesheet">
+<style>
+:root{--bg:#f4f3f8;--bg2:#e9eef7;--sf:rgba(255,255,255,.72);--sf2:#fbfaff;--tx:#23232e;--mu:#6b6b7d;--bd:rgba(60,60,90,.13);--ac:#8b7fd0;--ac2:#7ea6d8;--mint:#8fd1bd;--ed:#fcfcff;--sh:0 4px 18px rgba(60,60,100,.08);--ok:#4fae93}
+[data-theme=dark]{--bg:#1c1d22;--bg2:#202228;--sf:rgba(40,42,50,.75);--sf2:#2a2c34;--tx:#e6e6ee;--mu:#9a9bab;--bd:rgba(255,255,255,.1);--ac:#a597e6;--ac2:#7fa8e0;--mint:#6fcbb8;--ed:#1f2025;--sh:0 4px 18px rgba(0,0,0,.3);--ok:#6fcbb8}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font-family:"Fixel Display","Fixel Variable",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:16px;line-height:1.6;color:var(--tx);background:linear-gradient(135deg,var(--bg),var(--bg2));transition:background .3s,color .3s;overflow-x:hidden}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.app{display:grid;grid-template-columns:280px 1fr;grid-template-rows:56px 1fr;height:100vh}
+header{grid-column:1/-1;display:flex;align-items:center;gap:12px;padding:0 18px;background:var(--sf);backdrop-filter:blur(12px);border-bottom:1px solid var(--bd)}
+header h1{font-size:17px;margin:0;flex:1}
+header h1 small{color:var(--mu);font-weight:400;margin-left:8px}
+.ib,.btn{border:1px solid var(--bd);background:var(--sf2);border-radius:10px;padding:7px 12px;min-height:38px;transition:.2s}
+.ib{width:40px;padding:0;display:grid;place-items:center}
+.ib:hover,.btn:hover{border-color:var(--ac)}
+.btn.pr{background:var(--ac);color:#fff;border-color:transparent}
+.btn.done{background:var(--ok);color:#fff;border-color:transparent}
+svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+aside{background:var(--sf);backdrop-filter:blur(12px);border-right:1px solid var(--bd);padding:16px;overflow:auto;transition:transform .25s}
+.pb{height:8px;background:var(--bd);border-radius:8px;overflow:hidden;margin:6px 0 4px}
+.pb i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--ac),var(--mint));transition:width .3s}
+.pc{display:flex;justify-content:space-between;color:var(--mu);font-size:13px;margin-bottom:14px}
+.mod{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--mu);margin:16px 6px 6px}
+.li{display:flex;align-items:center;gap:8px;width:100%;text-align:left;border:0;background:none;padding:8px 10px;border-radius:10px;font-size:14px;line-height:1.35}
+.li:hover{background:var(--sf2)}
+.li[aria-current=true]{background:var(--sf2);box-shadow:inset 3px 0 0 var(--ac);font-weight:600}
+.li b{width:18px;height:18px;flex:none;border-radius:50%;border:1.5px solid var(--bd);display:grid;place-items:center}
+.li.d b{background:var(--ok);border-color:var(--ok);color:#fff}
+.li b svg{width:11px;height:11px;stroke-width:3;opacity:0}.li.d b svg{opacity:1}
+main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:16px;padding:16px;overflow:hidden;min-height:0}
+.col{overflow:auto;min-height:0;display:flex;flex-direction:column;gap:14px}
+.card{background:var(--sf);backdrop-filter:blur(10px);border:1px solid var(--bd);border-radius:16px;box-shadow:var(--sh);padding:16px 18px}
+.card h2{font-size:15px;margin:0 0 8px;color:var(--ac)}
+h2.t{font-size:22px;color:var(--tx);line-height:1.3}
+.card p{margin:.5em 0}
+.task{border-left:4px solid var(--mint)}
+.th li{margin:3px 0}
+code{font-family:ui-monospace,Consolas,Menlo,monospace;background:var(--bd);border-radius:5px;padding:1px 5px;font-size:.9em}
+pre{margin:8px 0;padding:12px;background:var(--ed);border:1px solid var(--bd);border-radius:10px;overflow:auto;font:13px/1.55 ui-monospace,Consolas,Menlo,monospace;tab-size:4}
+pre code{background:none;padding:0}
+.nav{display:flex;gap:8px;flex-wrap:wrap;padding-bottom:4px}
+.nav .sp{flex:1}
+.ws{display:flex;flex-direction:column;gap:12px;min-height:0;height:100%}
+.pane{display:flex;flex-direction:column;min-height:220px;flex:1;background:var(--sf);border:1px solid var(--bd);border-radius:16px;box-shadow:var(--sh);overflow:hidden}
+.ph{display:flex;align-items:center;gap:6px;padding:8px 10px;border-bottom:1px solid var(--bd);flex-wrap:wrap}
+.ph h3{font-size:14px;margin:0 auto 0 4px;font-weight:600}
+.tab{border:0;background:none;padding:5px 12px;border-radius:8px;font-size:14px;min-height:34px}
+.tab[aria-selected=true]{background:var(--ac);color:#fff}
+.ed{display:flex;flex:1;min-height:0;background:var(--ed);font:14px/21px ui-monospace,Consolas,Menlo,monospace}
+#gut{padding:10px 8px 24px;text-align:right;color:var(--mu);background:rgba(128,128,150,.07);border-right:1px solid var(--bd);overflow:hidden;user-select:none;white-space:pre;min-width:42px}
+.cw{position:relative;flex:1;min-width:0}
+#hl,#ta{position:absolute;inset:0;margin:0;padding:10px 12px;font:inherit;white-space:pre;tab-size:4;border:0;border-radius:0}
+#hl{overflow:hidden;pointer-events:none;color:var(--tx);background:none;padding-bottom:40px;padding-right:40px}
+#ta{color:transparent;caret-color:var(--tx);background:transparent;overflow:auto;resize:none;outline:0}
+#ta::selection{background:rgba(139,127,208,.35)}
+#ta:focus-visible{outline:0;box-shadow:inset 0 0 0 2px var(--ac)}
+:root{--c-k:#7a4fd0;--c-t:#c2397f;--c-a:#a85d12;--c-s:#2a8450;--c-c:#8a8aa0;--c-n:#b5651d;--c-f:#2f6fc0;--c-o:#16897f;--c-p:#2f6fc0}
+[data-theme=dark]{--c-k:#c4a7ff;--c-t:#ff8fb1;--c-a:#ffb86c;--c-s:#8fd9a8;--c-c:#7a7f90;--c-n:#ffb86c;--c-f:#82aaff;--c-o:#5ed4c8;--c-p:#82aaff}
+.k{color:var(--c-k)}.t{color:var(--c-t)}.a{color:var(--c-a)}.s{color:var(--c-s)}.c{color:var(--c-c);font-style:italic}.n{color:var(--c-n)}.f{color:var(--c-f)}.o{color:var(--c-o)}.p{color:var(--c-p)}
+#lesson{display:flex;flex-direction:column;gap:14px}
+.lh{display:flex;align-items:center;justify-content:space-between;padding:8px 14px}.lh h2{margin:0}
+.pane.shut{flex:none;min-height:0}.pane.shut>:not(.ph){display:none}
+#lw.shut #lesson{display:none}#lw.shut{overflow:visible}
+.cv svg{transition:transform .2s}.shut .cv svg{transform:rotate(-90deg)}
+.cmd{display:flex;gap:12px;align-items:baseline;padding:7px 0;border-top:1px solid var(--bd)}
+.cmd:first-of-type{border-top:0}.cmd code{flex:0 0 40%;white-space:normal;word-break:break-word}.cmd span{flex:1;font-size:14px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:grid;place-items:center;z-index:60;padding:16px}
+.modal[hidden]{display:none}.mc{max-width:440px;width:100%;background:var(--sf2)}
+.mc a{color:var(--ac)}.mc .btn{margin-top:6px}
+@media(min-width:1101px){.app.noside{grid-template-columns:1fr}.app.noside aside{display:none}.app.noside main{grid-column:1}main.nol{grid-template-columns:minmax(0,260px) minmax(0,1fr)}}
+iframe{flex:1;border:0;background:transparent;width:100%;min-height:0}
+#toast{position:fixed;bottom:22px;left:50%;transform:translate(-50%,20px);background:var(--tx);color:var(--bg);padding:9px 18px;border-radius:10px;opacity:0;transition:.25s;pointer-events:none;z-index:50}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+@media(max-width:1100px){
+ .app{grid-template-columns:1fr;height:auto;min-height:100vh}
+ body{overflow:auto}header{grid-column:1;position:sticky;top:0;z-index:20}
+ #menu{display:grid}
+ aside{position:fixed;top:56px;bottom:0;left:0;width:290px;max-width:85vw;z-index:30;transform:translateX(-100%);box-shadow:var(--sh)}
+ aside.open{transform:none}
+ main{grid-template-columns:1fr;overflow:visible}
+ .col{overflow:visible}.ws{height:auto}
+ .ed{height:300px;flex:none}iframe{height:340px;flex:none}.pane{flex:none}
+}
+@media(max-width:520px){header h1 small{display:none}.card{padding:14px}.cmd{flex-direction:column;gap:2px}.cmd code{flex:none}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+ <button class="ib" id="menu" aria-label="Меню курсу" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+ <h1>Веб-програмування</h1>
+ <button class="ib" id="info" aria-label="Про курс"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></button>
+ <button class="ib" id="theme" aria-label="Змінити тему"></button>
+</header>
+<aside id="side" aria-label="Навігація курсу">
+ <div class="pc"><span id="pct">0%</span><span id="cnt">0 / 12</span></div>
+ <div class="pb" role="progressbar" aria-valuemin="0" aria-valuemax="100" id="pbar"><i></i></div>
+ <nav id="nav"></nav>
+</aside>
+<main>
+ <section class="col" id="lw" aria-label="Урок"><div class="card lh"><h2>Теорія та завдання</h2><button class="ib cv" data-k="lw" aria-label="Згорнути" aria-expanded="true"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button></div><div id="lesson"></div></section>
+ <section class="ws" aria-label="Робоча область">
+  <div class="pane" id="p-ed">
+   <div class="ph">
+    <button class="ib cv" data-k="ed" aria-label="Згорнути" aria-expanded="true"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button>
+    <h3>Редактор коду</h3>
+    <div role="tablist" id="tabs">
+     <button class="tab" role="tab" data-l="h">HTML</button>
+     <button class="tab" role="tab" data-l="c">CSS</button>
+     <button class="tab" role="tab" data-l="j">JavaScript</button>
+    </div>
+    <button class="ib" id="copy" aria-label="Копіювати код" title="Копіювати код"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></button>
+    <button class="ib" id="reset" aria-label="Скинути код" title="Скинути код"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5"/></svg></button>
+   </div>
+   <div class="ed"><div id="gut" aria-hidden="true"></div><div class="cw"><pre id="hl" aria-hidden="true"></pre><textarea id="ta" spellcheck="false" autocapitalize="off" autocomplete="off" wrap="off" aria-label="Код"></textarea></div></div>
+  </div>
+  <div class="pane" id="p-pv">
+   <div class="ph"><button class="ib cv" data-k="pv" aria-label="Згорнути" aria-expanded="true"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button><h3>Попередній перегляд</h3></div>
+   <iframe id="pv" title="Попередній перегляд" sandbox="allow-scripts allow-modals allow-forms"></iframe>
+  </div>
+ </section>
+</main>
+</div>
+<div class="modal" id="modal" hidden role="dialog" aria-modal="true" aria-labelledby="mt"><div class="card mc">
+<h2 id="mt">Про курс</h2>
+<p>Веб-курс з основ вебпрограмування (HTML, CSS, JavaScript) для учнів середніх і старших класів.</p>
+<p>Для поглибленого вивчення теорії: <a href="https://it-osvita.diia.gov.ua/task/item/e79f37cc-9c36-4935-9fdb-439a98d9c485" target="_blank" rel="noopener noreferrer">курс із веброзробки на платформі ІТ-студії Дія</a>.</p>
+<p>Автор сайту: <a href="https://github.com/whyuxavier" target="_blank" rel="noopener noreferrer">GitHub — whyuxavier</a></p>
+<button class="btn pr" id="mclose">Закрити</button></div></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+'use strict';
+const D=(t,b)=>'<!DOCTYPE html>\n<html lang="uk">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>'+t+'</title>\n</head>\n<body>\n'+b+'\n</body>\n</html>';
+const BP=D('Моя перша вебсторінка','    <!-- Створи свою сторінку тут -->');
+const MODS=['HTML — структура та вміст','CSS — стиль і адаптивність','JavaScript — інтерактивність'];
+const MOD_OF=[0,0,0,1,1,1,1,2,2,2,2,2];
+
+const LESSONS=[
+{t:'Знайомство з вебсередовищем. Перша вебсторінка',
+ th:"<p><b>HTML</b> (HyperText Markup Language) — мова розмітки, що описує <i>зміст</i> сторінки: заголовки, абзаци, списки. <b>CSS</b> відповідає за вигляд сторінки, а <b>JavaScript</b> — за її поведінку.</p><p><b>Tag (укр. тег)</b> — службове слово в кутових дужках. Більшість тегів парні: є відкривальний і закривальний. Кожен HTML-документ має однакову основу: у частині <b>head</b> зберігається службова інформація, а в <b>body</b> — усе, що бачить користувач.</p>",cm:[["<!DOCTYPE html>", "Повідомляє браузеру, що це документ HTML5."], ["<html lang=\"uk\">", "Кореневий елемент; lang задає мову сторінки."], ["<head>", "Службова інформація: кодування, назва вкладки."], ["<title>", "Назва сторінки на вкладці браузера."], ["<body>", "Видимий вміст сторінки."], ["<h1> … <h6>", "Заголовки: від найважливішого до найменшого."], ["<p>", "Абзац тексту."], ["<strong>", "Важливий текст, зазвичай напівжирний."], ["<br>", "Перенесення рядка; закривального тега немає."]],
+ ex:`<body>
+    <h1>Мій заголовок</h1>
+    <p>Звичайний абзац із <strong>важливою</strong> фразою.</p>
+    <p>Перший рядок<br>Другий рядок</p>
+</body>`,
+ task:'Створи власну вебсторінку з нуля.',
+ ok:['Напиши з нуля структуру документа: <!DOCTYPE html>, <html>, <head>, <body>. Якщо потрібна підказка — скористайся кнопкою нижче.','Додай головний заголовок <h1>.','Додай щонайменше два абзаци <p> зі вступом про себе або вигаданого героя.','Виділи важливу фразу тегом <strong>.','Задай назву сторінки в <title>.','Перевір результат у попередньому перегляді.'],
+ h:'',c:'/* Стилі додаватимемо з уроку 4 */',j:'// Код JavaScript з\'явиться в модулі 3'},
+
+{t:'Структурування контенту: списки, посилання та зображення',
+ th:"<p><b>Список</b> — набір пов'язаних пунктів: маркований (без порядку) або нумерований.</p><p><b>Атрибут</b> — додаткове налаштування тега у вигляді <i>назва=\"значення\"</i>.</p><p><b>Гіперпосилання</b> — елемент, який веде на іншу сторінку чи ресурс. Для зображень важливий <b>альтернативний текст</b>: його озвучують екранні читачі, а браузер показує, якщо картинка не завантажилась.</p>",cm:[["<ul>", "Маркований список."], ["<ol>", "Нумерований список."], ["<li>", "Пункт списку."], ["<a href=\"адреса\">", "Посилання; href — куди веде."], ["target=\"_blank\"", "Відкрити посилання в новій вкладці."], ["<img src=\"…\" alt=\"…\">", "Зображення; src — адреса, alt — опис."], ["width=\"200\"", "Ширина зображення в пікселях."]],
+ ex:`<ol>
+    <li><a href="https://uk.wikipedia.org" target="_blank">Вікіпедія</a></li>
+    <li>Другий ресурс</li>
+</ol>
+
+<img src="https://picsum.photos/id/237/200/120" alt="Чорний цуценя" width="200">`,
+ task:'Створи сторінку «Мої топ-5 корисних ресурсів» з посиланнями та картками з зображеннями.',
+ ok:['Нумерований список із 5 пунктів, кожен — посилання.','Принаймні 2 зображення з атрибутом alt.','Заголовок і короткий опис до сторінки.'],
+ h:D('Корисні ресурси','    <h1>Мої топ-5 корисних ресурсів</h1>\n\n    <!-- Додай нумерований список із посиланнями -->\n    <ol>\n        <li></li>\n    </ol>'),c:'',j:''},
+
+{t:'Таблиці та форми введення даних',
+ th:"<p><b>Таблиця</b> подає дані у рядках і стовпцях. <b>Форма</b> збирає дані від користувача.</p><p><b>Валідація</b> — перевірка введених даних до надсилання. Браузер може виконати її автоматично завдяки спеціальним атрибутам.</p>",cm:[["<table>", "Таблиця."], ["<tr>", "Рядок таблиці."], ["<th>", "Комірка-заголовок."], ["<td>", "Комірка з даними."], ["<form>", "Форма для збору даних."], ["<label>", "Підпис до поля вводу."], ["<input type=\"…\">", "Поле вводу: text, email, number, checkbox."], ["<select> <option>", "Випадаючий список і його варіанти."], ["<button>", "Кнопка."], ["required, min, max", "Атрибути валідації: обов'язкове поле, межі значень."]],
+ ex:`<table border="1">
+    <tr>
+        <th>Ім'я</th>
+        <th>Клас</th>
+    </tr>
+    <tr>
+        <td>Олена</td>
+        <td>10</td>
+    </tr>
+</table>
+
+<form>
+    <label>Email: <input type="email" required></label>
+    <button>Надіслати</button>
+</form>`,
+ task:'Створи форму реєстрації на шкільний ІТ-турнір.',
+ ok:['Поля: ім\'я, email, клас (select), гра (select).','Усі поля обов\'язкові (required).','Кнопка «Зареєструватися».','Таблиця розкладу турніру з щонайменше 3 рядками.'],
+ h:D('Реєстрація на турнір','    <h1>ІТ-турнір</h1>\n\n    <form>\n        <!-- Додай поля форми -->\n    </form>'),c:'',j:''},
+
+{t:'CSS-селектори та підключення стилів',
+ th:"<p><b>CSS</b> (Cascading Style Sheets) — мова стилів, що задає вигляд елементів. <b>Селектор</b> вказує, до яких елементів застосувати правило, а <b>декларація</b> — пара «властивість: значення».</p><p>Стилі можна підключити трьома способами: <b>inline</b> (прямо в тезі), <b>internal</b> (у тезі style в head) і <b>external</b> (окремий файл). Вкладка CSS у редакторі працює як зовнішній файл.</p>",cm:[["style=\"color: red\"", "Inline-стиль в атрибуті тега."], ["<style> … </style>", "Internal-стилі всередині head."], ["<link rel=\"stylesheet\" href=\"style.css\">", "Підключення зовнішнього файлу."], ["p { }", "Селектор елемента: усі абзаци."], [".card { }", "Селектор класу (class=\"card\")."], ["#main { }", "Селектор id: унікальний елемент."], ["color, background", "Колір тексту та фон."], ["font-size, font-family", "Розмір і гарнітура шрифту."], ["margin, padding", "Зовнішній і внутрішній відступи."]],
+ ex:`body {
+    font-family: Arial, sans-serif;
+    background: #f4f0ff;
+}
+
+h1 {
+    color: #5b4bb7;
+}
+
+.note {
+    padding: 10px;
+    background: white;
+}`,
+ task:'Оформ сторінку-профіль, створену в уроці 1.',
+ ok:['Твій HTML з уроку 1 уже перенесено в редактор (якщо там було порожньо — використано шаблон).','Змінений колір і шрифт тексту.','Фон сторінки.','Стиль для класу (додай class до свого тега в HTML).','Відступи між абзацами.'],
+ h:D('Мій профіль','    <h1>Привіт, я Олена</h1>\n    <p class="intro">Я навчаюся у 10 класі й вивчаю вебпрограмування.</p>\n    <p>Моя улюблена мова — <strong>HTML</strong>.</p>'),
+ c:'/* Оформи сторінку тут */\nbody {\n    \n}\n\nh1 {\n    \n}\n\np {\n    \n}',j:''},
+
+{t:'Блокова модель та позиціювання',
+ th:"<p>Кожен елемент сторінки — це прямокутна «коробка» (<b>блокова модель</b>): вміст, навколо нього внутрішній відступ, рамка та зовнішній відступ.</p><p><b>Блокові</b> елементи (div, p) займають весь рядок, <b>рядкові</b> (span, a) — лише власний вміст. <b>Позиціювання</b> визначає, де саме розміщується елемент.</p>",cm:[["width, height", "Розміри вмісту."], ["padding", "Внутрішній відступ."], ["border", "Рамка."], ["margin", "Зовнішній відступ; auto центрує блок."], ["box-sizing: border-box", "Ширина включає padding і border."], ["display: block / inline", "Блоковий або рядковий елемент."], ["position: relative / absolute", "Спосіб позиціювання елемента."], ["border-radius", "Заокруглення кутів."], ["box-shadow", "Тінь елемента."]],
+ ex:`* {
+    box-sizing: border-box;
+}
+
+.card {
+    width: 260px;
+    padding: 16px;
+    margin: 20px auto;
+    border: 1px solid #ccc;
+    border-radius: 14px;
+}`,
+ task:'Створи охайну картку товару або профілю.',
+ ok:['Задана ширина, padding, border і border-radius.','Картка по центру (margin: auto).','Тінь (box-shadow).','Використано box-sizing.'],
+ h:D('Картка','    <div class="card">\n        <h2>Назва</h2>\n        <p>Короткий опис товару або людини.</p>\n        <span class="price">199 грн</span>\n    </div>'),
+ c:'* {\n    box-sizing: border-box;\n}\n\nbody {\n    font-family: sans-serif;\n    background: #eef1fa;\n}\n\n.card {\n    \n}',j:''},
+
+{t:'Сучасне компонування: Flexbox',
+ th:"<p><b>Flexbox</b> — сучасна модель компонування: контейнер розташовує дочірні елементи вздовж <b>головної осі</b> (за замовчуванням горизонтальної), а перпендикулярна до неї — <b>поперечна вісь</b>.</p>",cm:[["display: flex", "Робить елемент гнучким контейнером."], ["justify-content", "Вирівнювання вздовж головної осі."], ["align-items", "Вирівнювання вздовж поперечної осі."], ["flex-wrap: wrap", "Дозволяє переносити елементи на новий рядок."], ["gap", "Проміжок між елементами."], ["flex: 1 1 200px", "Як елемент росте, стискається та яка його базова ширина."]],
+ ex:`.gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: center;
+}
+
+.item {
+    flex: 1 1 200px;
+}`,
+ task:'Створи адаптивну галерею карток проєктів.',
+ ok:['Контейнер із display: flex і gap.','Не менше 4 карток.','Картки переносяться на новий рядок при звуженні вікна.'],
+ h:D('Галерея','    <h1>Мої проєкти</h1>\n    <div class="gallery">\n        <div class="item">Проєкт 1</div>\n        <div class="item">Проєкт 2</div>\n        <div class="item">Проєкт 3</div>\n    </div>'),
+ c:'body {\n    font-family: sans-serif;\n    padding: 16px;\n}\n\n.gallery {\n    \n}\n\n.item {\n    padding: 24px;\n    background: #e3e0f7;\n    border-radius: 12px;\n}',j:''},
+
+{t:'CSS-анімації, переходи та адаптивність',
+ th:"<p><b>Перехід</b> (transition) робить зміну стилю плавною. <b>Анімація</b> описує кілька кадрів. <b>Адаптивність</b> — здатність сторінки підлаштовуватись під розмір екрана; для цього використовують <b>медіазапити</b>.</p>",cm:[["transition: transform .2s", "Плавна зміна властивості за 0,2 с."], ["transform: scale(1.1)", "Зміна масштабу, також translate, rotate."], [":hover", "Стан при наведенні курсора."], ["@keyframes назва { }", "Опис кадрів анімації."], ["animation: назва 2s infinite", "Запуск анімації."], ["@media (max-width: 768px) { }", "Стилі лише для екранів вужчих за 768 px."]],
+ ex:`.btn {
+    transition: transform .2s;
+}
+
+.btn:hover {
+    transform: scale(1.08);
+}
+
+@keyframes pulse {
+    50% { opacity: .5; }
+}
+
+@media (max-width: 768px) {
+    .gallery { flex-direction: column; }
+}`,
+ task:'Створи анімовану кнопку заклику до дії та адаптуй галерею для мобільних екранів.',
+ ok:['Кнопка змінюється при наведенні (transition + transform).','Є анімація @keyframes.','Є @media (max-width: 768px), що змінює макет.'],
+ h:D('Анімація','    <button class="cta">Приєднатися</button>\n    <div class="gallery">\n        <div class="item">1</div>\n        <div class="item">2</div>\n        <div class="item">3</div>\n    </div>'),
+ c:'body {\n    font-family: sans-serif;\n    padding: 16px;\n}\n\n.cta {\n    padding: 12px 28px;\n    border: 0;\n    border-radius: 10px;\n    background: #8b7fd0;\n    color: white;\n}\n\n.gallery {\n    display: flex;\n    gap: 12px;\n    margin-top: 20px;\n}\n\n.item {\n    flex: 1;\n    padding: 24px;\n    background: #e3e0f7;\n}\n\n/* Додай :hover, @keyframes та @media */',j:''},
+
+{t:'Змінні, типи даних та взаємодія з користувачем',
+ th:"<p><b>Змінна</b> — іменована комірка пам'яті. <b>Тип даних</b> визначає, що в ній зберігається: текст (string), число (number) чи логічне значення (boolean).</p><p><b>DOM</b> — «дерево» елементів сторінки, яким керує JavaScript. Через нього скрипт змінює вміст сторінки.</p>",cm:[["let x = 5", "Змінна, значення якої можна змінювати."], ["const name = \"Оля\"", "Стала: значення не змінюється."], ["console.log(x)", "Вивід у консоль браузера."], ["alert(\"текст\")", "Повідомлення у вікні."], ["prompt(\"Питання\")", "Запит тексту в користувача."], ["document.querySelector(\"#id\")", "Пошук елемента на сторінці."], ["elem.textContent = \"…\"", "Змінити текст елемента."], ["elem.innerHTML = \"…\"", "Змінити вміст як HTML."]],
+ ex:`const name = prompt("Як тебе звати?");
+let age = 16;
+const isStudent = true;
+
+console.log(name, age, isStudent);
+document.querySelector("#out").textContent = "Привіт, " + name + "!";`,
+ task:'Створи інтерактивну програму-привітання.',
+ ok:['Запитай ім\'я через prompt.','Збережи його у змінній.','Виведи привітання на сторінку через textContent.'],
+ h:D('Привітання','    <h1 id="out">Привіт!</h1>'),c:'body {\n    font-family: sans-serif;\n    text-align: center;\n    padding: 40px;\n}',
+ j:'// Запитай ім\'я та покажи привітання\nconst out = document.querySelector("#out");\n\n'},
+
+{t:'Події та робота з DOM',
+ th:"<p><b>Подія</b> — це дія користувача або браузера: клік, введення, натискання клавіші. <b>Обробник події</b> — функція, яка виконується, коли подія настала.</p>",cm:[["document.querySelector()", "Знаходить елемент за CSS-селектором."], ["addEventListener(\"click\", f)", "Підписує функцію f на подію click."], ["function () { }", "Функція — іменований блок коду."], ["classList.toggle(\"dark\")", "Додає або прибирає клас."], ["elem.textContent", "Читання або зміна тексту."]],
+ ex:`const btn = document.querySelector("#btn");
+
+btn.addEventListener("click", function () {
+    document.body.classList.toggle("dark");
+});`,
+ task:'Реалізуй перемикач світлої/темної теми у власному міні-проєкті.',
+ ok:['Кнопка перемикає клас dark на body.','У CSS є стилі для .dark.','Текст кнопки змінюється залежно від теми.'],
+ h:D('Тема','    <h1>Мій міні-проєкт</h1>\n    <p>Натисни на кнопку, щоб змінити тему.</p>\n    <button id="btn">Темна тема</button>'),
+ c:'body {\n    font-family: sans-serif;\n    padding: 30px;\n    background: #fff;\n    color: #222;\n}\n\nbody.dark {\n    \n}',j:'const btn = document.querySelector("#btn");\n\n// Додай addEventListener\n'},
+
+{t:'Умови та розгалуження',
+ th:"<p><b>Умова</b> дозволяє програмі обирати, яку дію виконати. <b>Логічний оператор</b> поєднує умови. Значення з поля вводу завжди приходить як рядок, тому його перетворюють на число та перевіряють.</p>",cm:[["if (умова) { }", "Виконується, якщо умова істинна."], ["else if / else", "Додаткова умова / усі інші випадки."], ["===, !==", "Строго дорівнює / не дорівнює."], ["<, >, <=, >=", "Порівняння чисел."], ["&&, ||, !", "І, або, не."], ["Number(рядок)", "Перетворення рядка на число."], ["isNaN(x)", "true, якщо x — не число."], ["Math.floor(Math.random() * 100)", "Випадкове ціле число від 0 до 99."]],
+ ex:`const n = Number(input.value);
+
+if (isNaN(n)) {
+    msg.textContent = "Введи число";
+} else if (n > secret) {
+    msg.textContent = "Менше";
+} else {
+    msg.textContent = "Більше";
+}`,
+ task:'Заверш гру «Вгадай число».',
+ ok:['Перевір, що введено число від 1 до 100.','Підказки «Більше» / «Менше».','Повідомлення про перемогу.'],
+ h:D('Вгадай число','    <h1>Вгадай число від 1 до 100</h1>\n    <input id="num" type="number">\n    <button id="go">Перевірити</button>\n    <p id="msg"></p>'),
+ c:'body {\n    font-family: sans-serif;\n    padding: 30px;\n}',
+ j:'const secret = Math.floor(Math.random() * 100) + 1;\nconst input = document.querySelector("#num");\nconst msg = document.querySelector("#msg");\n\ndocument.querySelector("#go").addEventListener("click", function () {\n    const n = Number(input.value);\n\n    // Додай умови if / else if / else\n});'},
+
+{t:'Масиви та цикли',
+ th:"<p><b>Масив</b> — впорядкований список значень; кожне має <b>індекс</b> (нумерація з нуля). <b>Цикл</b> повторює дії. Нові елементи на сторінці створюють з коду та додають у DOM.</p>",cm:[["const a = [\"a\", \"b\"]", "Створення масиву."], ["a[0], a.length", "Перший елемент і довжина масиву."], ["a.push(x)", "Додає елемент у кінець масиву."], ["for (let i = 0; i < n; i++)", "Цикл із лічильником."], ["while (умова)", "Цикл, поки умова істинна."], ["document.createElement(\"li\")", "Створює елемент."], ["list.append(li)", "Додає елемент у список на сторінці."], ["li.remove()", "Видаляє елемент зі сторінки."]],
+ ex:`const items = ["HTML", "CSS", "JS"];
+
+for (let i = 0; i < items.length; i++) {
+    const li = document.createElement("li");
+    li.textContent = items[i];
+    list.append(li);
+}`,
+ task:'Створи працюючий To-Do List із додаванням і видаленням завдань.',
+ ok:['Додавання завдання з поля вводу.','Кнопка видалення біля кожного завдання.','Порожні завдання не додаються.'],
+ h:D('To-Do','    <h1>Мої завдання</h1>\n    <input id="task" placeholder="Нове завдання">\n    <button id="add">Додати</button>\n    <ul id="list"></ul>'),
+ c:'body {\n    font-family: sans-serif;\n    padding: 30px;\n}\n\nli {\n    margin: 6px 0;\n}',
+ j:'const input = document.querySelector("#task");\nconst list = document.querySelector("#list");\n\ndocument.querySelector("#add").addEventListener("click", function () {\n    const text = input.value.trim();\n    if (text === "") return;\n\n    const li = document.createElement("li");\n    li.textContent = text + " ";\n\n    // Створи кнопку видалення і додай її до li\n\n    list.append(li);\n    input.value = "";\n});'},
+
+{t:'Підсумковий проєкт: інтерактивна гра «Швидкий клік»',
+ th:"<p><b>Стан гри</b> — дані про поточну ситуацію (очки, час). <b>Таймер</b> викликає функцію через однакові проміжки часу. У фінальному проєкті ви поєднуєте HTML (структура), CSS (вигляд) і JavaScript (логіка).</p>",cm:[["setInterval(f, 1000)", "Викликає f щосекунди; повертає id таймера."], ["clearInterval(id)", "Зупиняє таймер."], ["score++", "Збільшує змінну на 1."], ["elem.disabled = true", "Вимикає кнопку."], ["elem.textContent = …", "Виводить текст на сторінку."]],
+ ex:`let time = 10;
+const id = setInterval(function () {
+    time--;
+    if (time === 0) {
+        clearInterval(id);
+    }
+}, 1000);`,
+ task:'Заверш гру: 10 секунд, кнопка старту, таймер, лічильник, результат і перезапуск.',
+ ok:['Гра триває рівно 10 секунд.','Клики зараховуються лише під час гри.','Після завершення видно результат, а кнопка дозволяє почати знову.'],
+ h:D('Швидкий клік','    <h1>Швидкий клік</h1>\n    <p>Час: <span id="time">10</span> с · Очки: <span id="score">0</span></p>\n    <button id="start">Старт</button>\n    <button id="hit" disabled>Клік!</button>\n    <p id="result"></p>'),
+ c:'body {\n    font-family: sans-serif;\n    text-align: center;\n    padding: 24px;\n}\n\nbutton {\n    padding: 14px 28px;\n    margin: 6px;\n    border: 0;\n    border-radius: 12px;\n    background: #8b7fd0;\n    color: white;\n    font-size: 18px;\n}\n\nbutton:disabled {\n    opacity: .4;\n}',
+ j:'const timeEl = document.querySelector("#time");\nconst scoreEl = document.querySelector("#score");\nconst startBtn = document.querySelector("#start");\nconst hitBtn = document.querySelector("#hit");\nconst result = document.querySelector("#result");\n\nlet score = 0;\nlet time = 10;\nlet timerId = null;\n\nfunction show() {\n    timeEl.textContent = time;\n    scoreEl.textContent = score;\n}\n\n// 1. Напиши функцію endGame(): зупини таймер (clearInterval),\n//    вимкни кнопку «Клік!», увімкни «Старт» і покажи результат у #result.\n\n\n// 2. Додай обробник кліку на кнопку «Старт» (startBtn):\n//    скинь score і time, увімкни «Клік!», запусти setInterval,\n//    який щосекунди зменшує time й викликає endGame(), коли час вийшов.\n\n\n// 3. Додай обробник кліку на кнопку «Клік!» (hitBtn):\n//    збільшуй score і оновлюй екран через show().\n'}
+];
+
+/* ---------- стан і сховище ---------- */
+const K='wpc:';
+const store={
+ get(k,d){try{const v=localStorage.getItem(K+k);return v===null?d:JSON.parse(v)}catch(e){return d}},
+ set(k,v){try{localStorage.setItem(K+k,JSON.stringify(v))}catch(e){}},
+ del(k){try{localStorage.removeItem(K+k)}catch(e){}}
+};
+let cur=store.get('cur',0),lang='h',done=store.get('done',[]);
+if(!(cur>=0&&cur<12))cur=0;
+const $=s=>document.querySelector(s);
+const ta=$('#ta'),gut=$('#gut'),pv=$('#pv'),hl=$('#hl');
+const ICON={moon:'<svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>',sun:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>'};
+const CHECK='<svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg>';
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+let tt;
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),1800)}
+
+function setTheme(t){document.documentElement.dataset.theme=t;$('#theme').innerHTML=t==='dark'?ICON.sun:ICON.moon;$('#theme').setAttribute('aria-label',t==='dark'?'Увімкнути світлу тему':'Увімкнути темну тему');store.set('theme',t)}
+$('#theme').onclick=()=>{setTheme(document.documentElement.dataset.theme==='dark'?'light':'dark');preview()};
+setTheme(store.get('theme',matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'));
+
+/* ---------- підсвітка синтаксису ---------- */
+const E=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const W=(c,s)=>'<span class="'+c+'">'+E(s)+'</span>';
+function hlHtml(s){
+ return s.replace(/(<!--[\s\S]*?(?:-->|$))|(<\/?[A-Za-z!][^>]*>?)|([^<]+|<)/g,(m,c,t,x)=>{
+  if(c)return W('c',c);
+  if(!t)return E(x);
+  const p=t.match(/^(<\/?!?)([\w-]*)([\s\S]*?)(\/?>?)$/);
+  const at=p[3].replace(/([^\s=]+)(\s*=\s*)?("[^"]*"|'[^']*'|[^\s"']+)?/g,(a,n,eq,v)=>W('a',n)+(eq?E(eq):'')+(v?W('s',v):''));
+  return E(p[1])+W('t',p[2])+at+E(p[4]);
+ });
+}
+function hlCss(s){
+ let d=0;
+ return s.replace(/(\/\*[\s\S]*?(?:\*\/|$))|("[^"\n]*"?|'[^'\n]*'?)|(@[\w-]+)|(#[0-9a-fA-F]{3,8}\b)|(-?\d*\.?\d+(?:px|em|rem|%|s|ms|vh|vw|deg|fr)?)|([{}])|([.#][\w-]+)|(:{1,2}[A-Za-z-][\w-]*)|([\w-]+)(?=\s*:)|([A-Za-z_-][\w-]*)|([\s\S])/g,
+ (m,c,st,at,hx,n,br,sel,ps,pr,w)=>{
+  if(c)return W('c',m);if(st)return W('s',m);if(at)return W('k',m);if(hx||n)return W('n',m);
+  if(br){d+=m==='{'?1:-1;return E(m)}
+  if(sel)return d?E(m):W('f',m);
+  if(ps)return d?E(m):W('k',m);
+  if(pr)return d?W('p',m):W('t',m);
+  if(w)return d?E(m):W('t',m);
+  return E(m);
+ });
+}
+const JK=/^(?:const|let|var|function|return|if|else|for|while|new|this|true|false|null|undefined|break|continue|of|in|typeof)$/;
+const JB=/^(?:document|console|window|Math|Number|String|Array|Date|JSON)$/;
+function hlJs(s){
+ return s.replace(/(\/\/[^\n]*|\/\*[\s\S]*?(?:\*\/|$))|("(?:[^"\\\n]|\\.)*"?|'(?:[^'\\\n]|\\.)*'?|`(?:[^`\\]|\\.)*`?)|(\b\d+\.?\d*\b)|(\.\s*[A-Za-z_$][\w$]*)|([A-Za-z_$][\w$]*)|([\s\S])/g,
+ (m,c,st,n,pr,w,o,off,str)=>{
+  if(c)return W('c',m);if(st)return W('s',m);if(n)return W('n',m);
+  const call=/^\s*\(/.test(str.slice(off+m.length));
+  if(pr){const nm=m.match(/[A-Za-z_$][\w$]*$/)[0];return E(m.slice(0,m.length-nm.length))+W(call?'f':'p',nm)}
+  if(w){return JK.test(m)?W('k',m):JB.test(m)?W('o',m):call?W('f',m):E(m)}
+  return E(m);
+ });
+}
+const HL={h:hlHtml,c:hlCss,j:hlJs};
+
+/* ---------- код ---------- */
+const codeKey=(i,l)=>'code:'+i+':'+l;
+const starter=(i,l)=>LESSONS[i][l];
+const getCode=(i,l)=>{
+ const v=store.get(codeKey(i,l),null);if(v!==null)return v;
+ if(i===3&&l==='h'){const p=store.get(codeKey(0,'h'),'');if(p.trim())return p}
+ return starter(i,l);
+};
+function updateGutter(){
+ const n=ta.value.split('\n').length;let s='';for(let i=1;i<=n;i++)s+=i+'\n';
+ gut.textContent=s;gut.scrollTop=ta.scrollTop;
+ hl.innerHTML=HL[lang](ta.value)+'\n';hl.scrollTop=ta.scrollTop;hl.scrollLeft=ta.scrollLeft;
+}
+function loadEditor(){ta.value=getCode(cur,lang);updateGutter();ta.scrollTop=0;
+ document.querySelectorAll('.tab').forEach(b=>{const on=b.dataset.l===lang;b.setAttribute('aria-selected',on);b.tabIndex=on?0:-1});
+ ta.setAttribute('aria-label','Код '+{h:'HTML',c:'CSS',j:'JavaScript'}[lang]);}
+ta.addEventListener('scroll',()=>{gut.scrollTop=ta.scrollTop;hl.scrollTop=ta.scrollTop;hl.scrollLeft=ta.scrollLeft});
+new ResizeObserver(()=>{gut.scrollTop=ta.scrollTop}).observe(ta);
+ta.addEventListener('input',()=>{store.set(codeKey(cur,lang),ta.value);updateGutter();schedule()});
+ta.addEventListener('keydown',e=>{
+ const s=ta.selectionStart,en=ta.selectionEnd,v=ta.value;
+ if(e.key==='Tab'){e.preventDefault();ins('    ',s,en)}
+ else if(e.key==='Enter'){
+  e.preventDefault();
+  const ls=v.lastIndexOf('\n',s-1)+1,line=v.slice(ls,s);
+  let ind=line.match(/^\s*/)[0];
+  if(/[{(\[]\s*$/.test(line)||/<(?!\/|!|meta|link|br|img|input|hr)[a-z][^>]*>\s*$/i.test(line)&&!/<\/[^>]+>\s*$/.test(line))ind+='    ';
+  ins('\n'+ind,s,en);
+ }
+});
+function ins(t,s,e){ta.focus();if(!document.execCommand||!document.execCommand('insertText',false,t)){ta.setRangeText(t,s,e,'end');ta.dispatchEvent(new Event('input'))}}
+
+/* ---------- попередній перегляд ---------- */
+let pt;
+function schedule(){clearTimeout(pt);pt=setTimeout(preview,400)}
+function before(html,tag,add){const i=html.toLowerCase().lastIndexOf(tag);return i<0?html+add:html.slice(0,i)+add+html.slice(i)}
+function themeBase(){
+ const d=document.documentElement.dataset.theme==='dark';
+ const bg=d?'#1f2025':'#fcfcff',tx=d?'#e6e6ee':'#23232e',ln=d?'#a597e6':'#5b4bb7';
+ return '<style>/* тема за замовчуванням: перекривається стилями учня */\n:where(:root){color-scheme:'+(d?'dark':'light')+'}\n:where(body){background:'+bg+';color:'+tx+';font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.5}\n:where(a){color:'+ln+'}\n</style>\n';
+}
+function preview(){
+ let h=getCode(cur,'h');const c=getCode(cur,'c'),j=getCode(cur,'j');
+ h=before(h,'</head>',themeBase()+'<style>\n'+c.replace(/<\/style/gi,'<\\/style')+'\n</style>\n');
+ h=before(h,'</body>','<script>\ntry {\n'+j.replace(/<\/script/gi,'<\\/script')+'\n} catch (e) { document.body.insertAdjacentHTML("beforeend", "<pre style=\\"color:#c0392b\\">Помилка: " + e.message + "</pre>"); }\n<\/script>\n');
+ pv.srcdoc=h;
+}
+
+/* ---------- дії ---------- */
+function copyText(t){
+ return (navigator.clipboard&&window.isSecureContext?navigator.clipboard.writeText(t):Promise.reject()).catch(()=>{
+  const x=document.createElement('textarea');x.value=t;x.style.cssText='position:fixed;opacity:0';document.body.append(x);x.select();
+  const ok=document.execCommand('copy');x.remove();if(!ok)throw new Error('copy');
+ });
+}
+const tryCopy=(t)=>copyText(t).then(()=>toast('Код скопійовано'),()=>toast('Не вдалося скопіювати'));
+$('#copy').onclick=()=>tryCopy(ta.value);
+$('#reset').onclick=()=>{store.del(codeKey(cur,lang));loadEditor();preview();toast('Код скинуто')};
+$('#tabs').onclick=e=>{const b=e.target.closest('.tab');if(b){lang=b.dataset.l;loadEditor()}};
+
+/* ---------- інтерфейс уроків ---------- */
+function renderNav(){
+ let h='',last=-1;
+ LESSONS.forEach((l,i)=>{
+  if(MOD_OF[i]!==last){last=MOD_OF[i];h+='<div class="mod">'+MODS[last]+'</div>'}
+  h+='<button class="li'+(done.includes(i)?' d':'')+'" data-i="'+i+'" aria-current="'+(i===cur)+'"><b>'+CHECK+'</b><span>Урок '+(i+1)+'. '+esc(l.t.split('.')[0])+'</span></button>';
+ });
+ $('#nav').innerHTML=h;
+ const p=Math.round(done.length/12*100);
+ $('#pct').textContent=p+'%';$('#cnt').textContent=done.length+' / 12';
+ $('#pbar').firstElementChild.style.width=p+'%';$('#pbar').setAttribute('aria-valuenow',p);
+}
+function renderLesson(){
+ const l=LESSONS[cur],d=done.includes(cur);
+ $('#lesson').innerHTML=
+ '<div class="card"><h2 class="t">Урок '+(cur+1)+'. '+esc(l.t)+'</h2></div>'+
+ '<div class="card"><h2>Теорія</h2>'+l.th+'</div>'+
+ '<div class="card"><h2>Команди та теги</h2>'+l.cm.map(c=>'<div class="cmd"><code>'+esc(c[0])+'</code><span>'+esc(c[1])+'</span></div>').join('')+'</div>'+
+ '<div class="card"><h2>Приклад коду</h2><pre><code>'+esc(l.ex)+'</code></pre></div>'+
+ '<div class="card task"><h2>Практичне завдання</h2><p><b>'+esc(l.task)+'</b></p><ul>'+l.ok.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>'+
+ (cur===0?'<button class="btn pr" id="cpbp">Копіювати HTML-структуру</button>':'')+'</div>'+
+ '<div class="nav"><button class="btn" id="prev"'+(cur?'':' disabled')+'>← Назад</button><span class="sp"></span>'+
+ '<button class="btn'+(d?' done':'')+'" id="mark" aria-pressed="'+d+'">'+(d?'Виконано':'Позначити виконаним')+'</button>'+
+ '<button class="btn pr" id="next"'+(cur<11?'':' disabled')+'>Далі →</button></div>';
+ $('#lw').scrollTop=0;
+ $('#prev').onclick=()=>go(cur-1);$('#next').onclick=()=>go(cur+1);
+ $('#mark').onclick=()=>{done=done.includes(cur)?done.filter(x=>x!==cur):done.concat(cur);store.set('done',done);renderNav();renderLesson();toast(done.includes(cur)?'Урок завершено':'Позначку знято')};
+ if(cur===0)$('#cpbp').onclick=()=>copyText(BP).then(()=>toast('Структуру скопійовано'),()=>toast('Не вдалося скопіювати'));
+}
+function go(i){if(i<0||i>11)return;cur=i;store.set('cur',i);lang='h';renderNav();renderLesson();loadEditor();preview();closeMenu();window.scrollTo(0,0)}
+$('#nav').onclick=e=>{const b=e.target.closest('.li');if(b)go(+b.dataset.i)};
+function closeMenu(){$('#side').classList.remove('open');$('#menu').setAttribute('aria-expanded','false')}
+const ui=store.get('ui',{});
+function applyUI(){
+ [['lw','lw'],['ed','p-ed'],['pv','p-pv']].forEach(([k,id])=>{
+  const el=$('#'+id),sh=!!ui[k],b=el.querySelector('.cv');
+  el.classList.toggle('shut',sh);b.setAttribute('aria-expanded',!sh);b.setAttribute('aria-label',sh?'Розгорнути':'Згорнути');
+ });
+ $('main').classList.toggle('nol',!!ui.lw);
+ $('.app').classList.toggle('noside',!!ui.side);
+}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('.cv');if(!b)return;ui[b.dataset.k]=!ui[b.dataset.k];store.set('ui',ui);applyUI()});
+$('#menu').onclick=()=>{
+ if(matchMedia('(max-width:1100px)').matches){const o=$('#side').classList.toggle('open');$('#menu').setAttribute('aria-expanded',o)}
+ else{ui.side=!ui.side;store.set('ui',ui);applyUI();$('#menu').setAttribute('aria-expanded',!ui.side)}
+};
+const modal=$('#modal');
+function openInfo(){modal.hidden=false;$('#mclose').focus()}
+function closeInfo(){modal.hidden=true;$('#info').focus()}
+$('#info').onclick=openInfo;$('#mclose').onclick=closeInfo;modal.onclick=e=>{if(e.target===modal)closeInfo()};
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeMenu();if(!modal.hidden)closeInfo()}});
+applyUI();renderNav();renderLesson();loadEditor();preview();
+</script>
+</body>
+</html>
