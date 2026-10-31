@@ -104,6 +104,11 @@ body.drag{user-select:none;cursor:col-resize}.drag iframe{pointer-events:none}
 .lk:hover{border-color:var(--ac)}.lk span{font-size:13px;color:var(--mu)}
 #bg{width:100%;height:auto;display:block;border-radius:12px;background:var(--ed);border:1px solid var(--bd);touch-action:none;cursor:crosshair}
 .bar{display:flex;align-items:center;justify-content:space-between;margin-top:8px;gap:8px}
+.gctl{display:flex;flex-wrap:wrap;align-items:center;gap:10px 22px;margin:4px 0 10px}
+.gctl label{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--mu);flex:1 1 220px}
+.gctl input[type=range]{flex:1;min-width:0;accent-color:var(--ac);height:28px}
+.gctl output{min-width:2ch;font-weight:600;color:var(--tx);text-align:right}
+.gctl .ib{flex:none}
 .li.bn b{border-color:var(--ac);color:var(--ac)}.li.bn b svg{opacity:1}
 
 /* ---------- головна ---------- */
@@ -274,7 +279,7 @@ svg.art{width:100%;height:auto;display:block;fill:var(--tx);stroke:none;stroke-w
 </svg></div>
  </section>
  <section class="sec" id="program" aria-labelledby="ph"><h3 id="ph">Програма курсу</h3><p>Три модулі: від структури сторінки до інтерактивності. Натисни на урок, щоб відкрити його.</p><div class="mods" id="mods"></div></section>
- <section class="sec" aria-labelledby="bh"><h3 id="bh">Бонус</h3><p>Корисні інструменти, відеоуроки й міні-гра, створена лише на HTML, CSS і JavaScript.</p><div class="hcards" id="bonus"></div></section>
+ <section class="sec" aria-labelledby="bh"><h3 id="bh">Бонус</h3><p>Корисні інструменти, безкоштовні відеокурси українською та міні-гра, створена лише на HTML, CSS і JavaScript.</p><div class="hcards" id="bonus"></div></section>
  <footer class="hf"><span>Веб-програмування · HTML, CSS, JavaScript</span><a href="https://github.com/whyuxavier/learn-web" target="_blank" rel="noopener noreferrer">GitHub — whyuxavier/learn-web</a></footer>
 </div>
 </div>
@@ -291,6 +296,7 @@ svg.art{width:100%;height:auto;display:block;fill:var(--tx);stroke:none;stroke-w
 </ul>
 <p>Для поглибленого вивчення теорії: <a href="https://it-osvita.diia.gov.ua/task/item/e79f37cc-9c36-4935-9fdb-439a98d9c485" target="_blank" rel="noopener noreferrer">курс із веброзробки на платформі ІТ-студії Дія</a>.</p>
 <a class="btn gh" href="https://github.com/whyuxavier/learn-web" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M12 3l2.8 5.8 6.2.9-4.5 4.4 1.1 6.2L12 17.3 6.4 20.3l1.1-6.2L3 9.7l6.2-.9z"/></svg>Репозиторій на GitHub</a>
+<p>Автор сайту: <a href="https://github.com/whyuxavier" target="_blank" rel="noopener noreferrer">whyuxavier</a></p></div></div>
 <div id="toast" role="status" aria-live="polite"></div>
 <script>
 'use strict';
@@ -301,7 +307,7 @@ const MOD_OF=[0,0,0,1,1,1,1,2,2,2,2,2];
 
 const LESSONS=[
 {t:'Знайомство з вебсередовищем. Перша вебсторінка',
- th:"<p><b>HTML</b> (HyperText Markup Language) — мова розмітки, що описує <i>зміст</i> сторінки: заголовки, абзаци, списки. <b>CSS</b> відповідає за вигляд сторінки, а <b>JavaScript</b> — за її поведінку.</p><p><b>Tag (укр.тег)</b> — службове слово в кутових дужках. Більшість тегів парні: є відкривальний і закривальний. Кожен HTML-документ має однакову основу: у частині <b>head</b> зберігається службова інформація, а в <b>body</b> — усе, що бачить користувач.</p>",cm:[["<!DOCTYPE html>", "Повідомляє браузеру, що це документ HTML5."], ["<html lang=\"uk\">", "Кореневий елемент; lang задає мову сторінки."], ["<head>", "Службова інформація: кодування, назва вкладки."], ["<title>", "Назва сторінки на вкладці браузера."], ["<body>", "Видимий вміст сторінки."], ["<h1> … <h6>", "Заголовки: від найважливішого до найменшого."], ["<p>", "Абзац тексту."], ["<strong>", "Важливий текст, зазвичай напівжирний."], ["<br>", "Перенесення рядка; закривального тега немає."]],
+ th:"<p><b>HTML</b> (HyperText Markup Language) — мова розмітки, що описує <i>зміст</i> сторінки: заголовки, абзаци, списки. <b>CSS</b> відповідає за вигляд сторінки, а <b>JavaScript</b> — за її поведінку.</p><p><b>Тег</b> — службове слово в кутових дужках. Більшість тегів парні: є відкривальний і закривальний. Кожен HTML-документ має однакову основу: у частині <b>head</b> зберігається службова інформація, а в <b>body</b> — усе, що бачить користувач.</p>",cm:[["<!DOCTYPE html>", "Повідомляє браузеру, що це документ HTML5."], ["<html lang=\"uk\">", "Кореневий елемент; lang задає мову сторінки."], ["<head>", "Службова інформація: кодування, назва вкладки."], ["<title>", "Назва сторінки на вкладці браузера."], ["<body>", "Видимий вміст сторінки."], ["<h1> … <h6>", "Заголовки: від найважливішого до найменшого."], ["<p>", "Абзац тексту."], ["<strong>", "Важливий текст, зазвичай напівжирний."], ["<br>", "Перенесення рядка; закривального тега немає."]],
  ex:`<body>
     <h1>Мій заголовок</h1>
     <p>Звичайний абзац із <strong>важливою</strong> фразою.</p>
@@ -620,7 +626,6 @@ $('#tabs').onclick=e=>{const b=e.target.closest('.tab');if(b){lang=b.dataset.l;l
 
 /* ---------- бонус ---------- */
 const STAR='<svg viewBox="0 0 24 24"><path d="M12 3l2.8 5.8 6.2.9-4.5 4.4 1.1 6.2L12 17.3 6.4 20.3l1.1-6.2L3 9.7l6.2-.9z"/></svg>';
-const YT=q=>'https://www.youtube.com/results?search_query='+encodeURIComponent(q);
 const TOOLS=[
  ['https://code.visualstudio.com/','Visual Studio Code','Безкоштовний редактор коду'],
  ['https://developer.mozilla.org/uk/','MDN Web Docs','Довідник з HTML, CSS, JS (українською)'],
@@ -635,31 +640,54 @@ const TOOLS=[
  ['https://www.figma.com/','Figma','Дизайн інтерфейсів'],
  ['https://github.com/','GitHub','Зберігання коду та публікація сайтів']];
 const VIDEO=[
- ['https://www.youtube.com/c/CodeUA/videos','Канал CodeUA','Уроки HTML5 та CSS3 українською'],
- [YT('ITVDN HTML CSS українською'),'ITVDN: HTML & CSS','Відеокурс українською'],
- [YT('ITVDN JavaScript Стартовий'),'ITVDN: JavaScript Стартовий','Основи JavaScript українською'],
- [YT('HTML CSS JavaScript з нуля українською'),'Пошук: курси з нуля','Добірка відео українською']];
+ ['https://www.youtube.com/@freelancerlifestyle','Фрілансер по життю','Верстка сайтів, HTML, CSS, JavaScript і фриланс'],
+ ['https://www.youtube.com/@codymoSolo/courses',"Кодимо солов'їною",'HTML, CSS, JavaScript і Astro'],
+ ['https://www.youtube.com/@itmentor/courses','ITMENTOR','Створення сайтів, графіка, Scratch, робототехніка'],
+ ['https://www.youtube.com/@savchukit1454/courses','SavchukIT','Frontend-розробка та JavaScript'],
+ ['https://www.youtube.com/@ProgerSchool/courses','Школа програмування','Python, Java, C#, C++, розробка ігор'],
+ ['https://www.youtube.com/@CodeUA/courses','CodeUA','Розробка, тестування, вебдизайн, DevOps']];
 const LNK=a=>a.map(x=>'<a class="lk" href="'+x[0]+'" target="_blank" rel="noopener noreferrer"><b>'+esc(x[1])+'</b><span>'+esc(x[2])+'</span></a>').join('');
 function bonusHtml(){
  return '<div class="card"><h2>Інструменти веброзробника</h2><div class="lks">'+LNK(TOOLS)+'</div></div>'+
  '<div class="card"><h2>Безкоштовні відеокурси на YouTube</h2><div class="lks">'+LNK(VIDEO)+'</div></div>'+
- '<div class="card"><h2>Що можна створити</h2><p>Ця міні-гра написана лише на HTML, CSS і JavaScript. Лови зірки — клікай або торкайся.</p><canvas id="bg" width="640" height="340" aria-label="Міні-гра: лови зірки"></canvas><div class="bar"><b id="bsc">Зловлено: 0</b><button class="btn" id="bre">Спочатку</button></div></div>';
+ '<div class="card"><h2>Що можна створити</h2><p>Ця міні-гра написана лише на HTML, CSS і JavaScript. Лопай бульбашки — клікай або торкайся. Повзунками змінюй кількість і швидкість.</p><div class="gctl"><label>Кількість <input type="range" id="gN" min="1" max="10" step="1"><output id="gNo"></output></label><label>Швидкість <input type="range" id="gV" min="1" max="10" step="1"><output id="gVo"></output></label><button class="ib" id="gSnd" aria-pressed="true"></button></div><canvas id="bg" width="640" height="340" aria-label="Міні-гра: лопай бульбашки"></canvas><div class="bar"><b id="bsc">Лопнуто: 0</b><button class="btn" id="bre">Спочатку</button></div></div>';
+}
+const SND_ON='<svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/></svg>',
+ SND_OFF='<svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>';
+let actx=null;
+function popSound(){
+ if(!store.get('snd',true))return;
+ try{
+  actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+  if(actx.state==='suspended')actx.resume();
+  const t=actx.currentTime,o=actx.createOscillator(),g=actx.createGain();
+  const f=520+Math.random()*380;
+  o.type='sine';o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f*2.2,t+.07);
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.28,t+.008);g.gain.exponentialRampToValueAtTime(.0001,t+.13);
+  o.connect(g).connect(actx.destination);o.start(t);o.stop(t+.15);
+ }catch(e){}
 }
 function bonusGame(){
  const cv=$('#bg'),x=cv.getContext('2d'),out=$('#bsc'),W=cv.width,H=cv.height;
+ const gN=$('#gN'),gV=$('#gV'),sb=$('#gSnd');
+ gN.value=store.get('gN',4);gV.value=store.get('gV',4);
+ const sync=()=>{$('#gNo').textContent=gN.value;$('#gVo').textContent=gV.value;store.set('gN',+gN.value);store.set('gV',+gV.value)};
+ gN.oninput=gV.oninput=sync;sync();
+ const sSync=()=>{const on=store.get('snd',true);sb.innerHTML=on?SND_ON:SND_OFF;sb.setAttribute('aria-pressed',on);sb.setAttribute('aria-label',on?'Вимкнути звук':'Увімкнути звук');sb.title=on?'Звук увімкнено':'Звук вимкнено'};
+ sb.onclick=()=>{store.set('snd',!store.get('snd',true));sSync()};sSync();
  let score=0,st=[],ps=[],last=0,n=0;
  const cs=getComputedStyle(document.documentElement),C=[cs.getPropertyValue('--ac').trim()||'#8b7fd0',cs.getPropertyValue('--ac2').trim()||'#7ea6d8',cs.getPropertyValue('--mint').trim()||'#8fd1bd'];
  cv.onpointerdown=e=>{
   const b=cv.getBoundingClientRect(),mx=(e.clientX-b.left)*W/b.width,my=(e.clientY-b.top)*H/b.height;
   for(let i=st.length-1;i>=0;i--){const q=st[i];
-   if(Math.hypot(q.x-mx,q.y-my)<q.r+8){st.splice(i,1);score++;out.textContent='Зловлено: '+score;
+   if(Math.hypot(q.x-mx,q.y-my)<q.r+8){st.splice(i,1);score++;popSound();out.textContent='Лопнуто: '+score;
     for(let k=0;k<12;k++)ps.push({x:q.x,y:q.y,vx:(Math.random()-.5)*5,vy:(Math.random()-.5)*5,l:1,c:q.c});break}}
  };
- $('#bre').onclick=()=>{score=0;st=[];ps=[];out.textContent='Зловлено: 0'};
+ $('#bre').onclick=()=>{score=0;st=[];ps=[];out.textContent='Лопнуто: 0'};
  function loop(t){
   if(!cv.isConnected)return;
   if(!document.body.classList.contains('home')){last=t;requestAnimationFrame(loop);return}
-  if(t-last>650){last=t;st.push({x:30+Math.random()*(W-60),y:-20,r:14+Math.random()*10,v:.8+Math.random()*1.4,c:C[n++%3]})}
+  const N=+gN.value,V=+gV.value;if(t-last>1800/N&&st.length<N*3){last=t;st.push({x:30+Math.random()*(W-60),y:-20,r:14+Math.random()*10,v:(.4+Math.random()*.7)*V*.45,c:C[n++%3]})}
   x.clearRect(0,0,W,H);
   st=st.filter(q=>(q.y+=q.v)<H+30);
   st.forEach(q=>{x.globalAlpha=.9;x.fillStyle=q.c;x.beginPath();x.arc(q.x,q.y,q.r,0,6.283);x.fill()});
