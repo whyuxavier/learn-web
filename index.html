@@ -7,6 +7,12 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%238b7fd0'/%3E%3Cstop offset='1' stop-color='%237ea6d8'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='15' fill='url(%23g)'/%3E%3Crect x='10' y='13' width='44' height='6' rx='3' fill='%23fff' opacity='.35'/%3E%3Cpath d='M25 27l-9 8 9 8M39 27l9 8-9 8M35 24l-6 22' fill='none' stroke='%23fff' stroke-width='4.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <meta name="description" content="Інтерактивний курс веб-програмування: HTML, CSS і JavaScript з редактором коду та живим попереднім переглядом.">
 <link href="https://fonts.cdnfonts.com/css/fixel-display" rel="stylesheet">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#8b7fd0">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Веб-програмування">
 <style>
 :root{--bg:#f4f3f8;--bg2:#e9eef7;--sf:rgba(255,255,255,.72);--sf2:#fbfaff;--tx:#23232e;--mu:#6b6b7d;--bd:rgba(60,60,90,.13);--ac:#8b7fd0;--ac2:#7ea6d8;--mint:#8fd1bd;--ed:#fcfcff;--sh:0 4px 18px rgba(60,60,100,.08);--ok:#4fae93;--sb:rgba(110,100,160,.35)}
 [data-theme=dark]{--bg:#1c1d22;--bg2:#202228;--sf:rgba(40,42,50,.75);--sf2:#2a2c34;--tx:#e6e6ee;--mu:#9a9bab;--bd:rgba(255,255,255,.1);--ac:#a597e6;--ac2:#7fa8e0;--mint:#6fcbb8;--ed:#1f2025;--sh:0 4px 18px rgba(0,0,0,.3);--ok:#6fcbb8;--sb:rgba(200,200,230,.25)}
@@ -960,6 +966,20 @@ function renderShared(){
  $('#svX').onclick=()=>{history.pushState(null,'',location.pathname+location.search);route()};
 }
 applyUI();if(ui.lc)setLc(ui.lc);go(cur);route();
+
+/* ---------- Офлайн-режим (PWA) ---------- */
+(()=>{
+ if(!('serviceWorker' in navigator)||!/^https?:$/.test(location.protocol))return;
+ const warm=reg=>{const w=reg&&(reg.active||reg.waiting||reg.installing);if(w&&navigator.onLine)w.postMessage({type:'warm'})};
+ addEventListener('load',()=>{
+  navigator.serviceWorker.register('sw.js',{updateViaCache:'none'})
+   .then(()=>navigator.serviceWorker.ready).then(reg=>{
+    warm(reg);
+    addEventListener('online',()=>{reg.update().catch(()=>{});warm(reg)});
+   }).catch(()=>{});
+  try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist().catch(()=>{})}catch(e){}
+ });
+})();
 </script>
 </body>
 </html>

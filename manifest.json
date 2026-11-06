@@ -1,0 +1,20 @@
+{
+  "id": "/learn-web/",
+  "name": "Веб-програмування",
+  "short_name": "Веб-програмування",
+  "description": "Інтерактивний курс веб-програмування: HTML, CSS і JavaScript з редактором коду та живим попереднім переглядом, навіть без інтернету.",
+  "lang": "uk",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f4f3f8",
+  "theme_color": "#8b7fd0",
+  "categories": ["education"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
