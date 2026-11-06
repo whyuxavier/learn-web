@@ -69,6 +69,12 @@ pre code{background:none;padding:0}
 #ta{color:transparent;caret-color:var(--tx);background:transparent;overflow:auto;resize:none;outline:0}
 #ta::selection{background:rgba(139,127,208,.35)}
 #ta:focus-visible{outline:0;box-shadow:inset 0 0 0 2px var(--ac)}
+.acl,.act{position:fixed;z-index:70;background:var(--sf2);border:1px solid var(--bd);border-radius:10px;box-shadow:0 8px 24px rgba(20,24,50,.16);font:13px/1.45 ui-monospace,Consolas,Menlo,monospace;color:var(--tx)}
+.acl{max-height:186px;overflow-y:auto;min-width:180px;max-width:min(440px,calc(100vw - 16px));padding:4px;overscroll-behavior:contain}
+.aci{display:flex;gap:8px;align-items:baseline;padding:4px 8px;border-radius:7px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.aci code,.act code{background:none;padding:0;border-radius:0;color:inherit}.aci code{font:inherit;font-weight:600}.aci span{color:var(--mu);overflow:hidden;text-overflow:ellipsis;font:12px/1.4 "Fixel Display",system-ui,sans-serif}.aci.on{background:var(--ac);color:#fff}.aci.on span{color:rgba(255,255,255,.85)}
+.act{max-width:min(460px,calc(100vw - 16px));padding:6px 10px;pointer-events:none}.act code{font:inherit;white-space:pre-wrap}.act span{color:var(--mu)}.act b{color:var(--ac);font-weight:700}
+.act small{display:block;font:12px/1.4 "Fixel Display",system-ui,sans-serif;color:var(--mu);margin-top:2px}
 :root{--c-k:#7a4fd0;--c-t:#c2397f;--c-a:#a85d12;--c-s:#2a8450;--c-c:#8a8aa0;--c-n:#b5651d;--c-f:#2f6fc0;--c-o:#16897f;--c-p:#2f6fc0}
 [data-theme=dark]{--c-k:#c4a7ff;--c-t:#ff8fb1;--c-a:#ffb86c;--c-s:#8fd9a8;--c-c:#7a7f90;--c-n:#ffb86c;--c-f:#82aaff;--c-o:#5ed4c8;--c-p:#82aaff}
 .k{color:var(--c-k)}.t{color:var(--c-t)}.a{color:var(--c-a)}.s{color:var(--c-s)}.c{color:var(--c-c);font-style:italic}.n{color:var(--c-n)}.f{color:var(--c-f)}.o{color:var(--c-o)}.p{color:var(--c-p)}
@@ -346,6 +352,7 @@ svg.art{width:100%;height:auto;display:block;fill:var(--tx);stroke:none;stroke-w
 <div class="mode"><h3>Мій прогрес</h3>
 <div class="row"><button class="btn" id="pSave"><svg viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Зберегти у файл</button><button class="btn" id="pLoad"><svg viewBox="0 0 24 24"><path d="M12 20V9M7 14l5-5 5 5M5 4h14"/></svg>Відкрити файл</button></div>
 <input type="file" id="pFile" accept=".json,application/json" hidden>
+<label class="sw"><span>Підказки в редакторі<small>Теги, властивості й команди під час набору коду</small></span><input type="checkbox" id="acT" role="switch"></label>
 <label class="sw"><span>Шкільний комп'ютер<small>Прогрес зникає після закриття браузера</small></span><input type="checkbox" id="schT" role="switch"></label></div>
 <a class="btn gh" href="https://github.com/whyuxavier/learn-web" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24"><path d="M12 3l2.8 5.8 6.2.9-4.5 4.4 1.1 6.2L12 17.3 6.4 20.3l1.1-6.2L3 9.7l6.2-.9z"/></svg>Репозиторій на GitHub</a></div></div>
 <div class="modal" id="shm" hidden role="dialog" aria-modal="true" aria-labelledby="sht"><div class="card mc">
@@ -670,6 +677,423 @@ ta.addEventListener('keydown',e=>{
  }
 });
 function ins(t,s,e){ta.focus();if(!document.execCommand||!document.execCommand('insertText',false,t)){ta.setRangeText(t,s,e,'end');ta.dispatchEvent(new Event('input'))}}
+/* ---------- Підказки в редакторі ---------- */
+const AC=(()=>{
+ const h_=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+ const sp=s=>s?s.split(' '):[];
+ /* --- HTML: тег: 'атрибути ; опис' --- */
+ const GA='id class style title hidden';
+ const TG={};
+ Object.entries({
+  html:'lang ; корінь документа',head:' ; службова частина сторінки',title:' ; назва вкладки браузера',
+  meta:'charset name content ; службові дані',link:'rel href ; підключає файл (CSS, іконку)',
+  style:' ; CSS усередині сторінки',script:'src ; JavaScript усередині сторінки',body:' ; усе, що бачить користувач',
+  h1:' ; заголовок 1 рівня (головний)',h2:' ; заголовок 2 рівня',h3:' ; заголовок 3 рівня',h4:' ; заголовок 4 рівня',h5:' ; заголовок 5 рівня',h6:' ; заголовок 6 рівня',
+  p:' ; абзац',strong:' ; важливий (жирний) текст',em:' ; виділений (курсивний) текст',br:' ; перенос рядка',hr:' ; горизонтальна лінія',
+  ul:' ; маркований список',ol:'type start ; нумерований список',li:' ; пункт списку',
+  a:'href target ; посилання',img:'src alt width height ; зображення',
+  table:'border ; таблиця',tr:' ; рядок таблиці',th:'colspan rowspan ; комірка-заголовок',td:'colspan rowspan ; комірка з даними',
+  form:'action method ; форма',label:'for ; підпис до поля',
+  input:'type name placeholder value required min max step checked disabled ; поле введення',
+  select:'name required ; список для вибору',option:'value selected ; варіант у списку',
+  textarea:'name rows cols placeholder required ; багаторядкове поле',
+  button:'type disabled ; кнопка',div:' ; блок-контейнер',span:' ; рядковий контейнер',
+  header:' ; шапка сторінки',nav:' ; меню навігації',main:' ; основний вміст',section:' ; розділ',article:' ; окрема стаття чи картка',footer:' ; підвал сторінки'
+ }).forEach(([k,v])=>{const [a,d]=v.split(' ; ');TG[k]={a:sp(a),d}});
+ const VOID=/^(meta|link|br|hr|img|input)$/;
+ const AD={id:'унікальне ім\'я елемента (#id)',class:'клас для CSS (.клас)',style:'CSS прямо в тегу',title:'підказка при наведенні',hidden:'сховати елемент',
+  lang:'мова сторінки',charset:'кодування символів',name:'назва поля / тип meta',content:'значення meta',rel:'тип підключеного файлу',href:'адреса посилання або файлу',
+  src:'адреса файлу',target:'де відкрити посилання',alt:'текст замість зображення',width:'ширина в пікселях',height:'висота в пікселях',
+  border:'рамка таблиці',colspan:'об\'єднати стовпці',rowspan:'об\'єднати рядки',action:'куди надіслати форму',method:'спосіб надсилання',for:'id поля, до якого підпис',
+  type:'тип',placeholder:'сірий текст-підказка в полі',value:'значення',required:'обов\'язкове поле',min:'найменше значення',max:'найбільше значення',step:'крок',
+  checked:'позначено',disabled:'вимкнено',selected:'вибрано',rows:'кількість рядків',cols:'кількість символів у рядку',start:'з якого числа почати'};
+ const BOOL=/^(hidden|required|checked|disabled|selected)$/;
+ const AV={
+  'input type':'text email number password checkbox radio date color range file submit',
+  'button type':'button submit reset','ol type':'1 a A i I','a target':'_blank _self','form method':'get post',
+  'link rel':'stylesheet icon','meta name':'viewport description author','meta charset':'UTF-8',
+  'meta content':'width=device-width,~initial-scale=1.0','html lang':'uk en'
+ };
+ /* --- CSS: властивість: значення через пробіл (~ — пробіл усередині значення) --- */
+ const COL='black white red green blue gray orange purple pink yellow transparent #ffffff rgb() rgba()';
+ const CP={
+  color:[COL,'колір тексту'],background:[COL+' linear-gradient() url()','фон'],'background-color':[COL,'колір фону'],
+  'font-size':['16px 1.2rem 2em','розмір шрифту'],'font-family':['sans-serif serif monospace Arial system-ui','шрифт'],
+  'font-weight':['normal bold 400 600 700','товщина шрифту'],'font-style':['normal italic','курсив'],'line-height':['1.5 normal','висота рядка'],
+  'text-align':['left center right justify','вирівнювання тексту'],'text-decoration':['none underline line-through','підкреслення'],
+  'text-transform':['uppercase lowercase capitalize none','регістр літер'],'letter-spacing':['1px normal','відстань між літерами'],
+  width:['auto 100% 200px 50vw','ширина'],height:['auto 100% 200px 100vh','висота'],'max-width':['100% 600px none','найбільша ширина'],
+  'min-height':['100vh 200px','найменша висота'],margin:['0 10px 0~auto auto','зовнішній відступ'],padding:['0 10px 10px~20px','внутрішній відступ'],
+  'margin-top':['0 10px auto','відступ зверху'],'margin-bottom':['0 10px auto','відступ знизу'],'margin-left':['0 10px auto','відступ зліва'],'margin-right':['0 10px auto','відступ справа'],
+  'padding-top':['0 10px','внутрішній відступ зверху'],'padding-bottom':['0 10px','внутрішній відступ знизу'],
+  border:['1px~solid~#ccc 2px~dashed~red none','рамка'],'border-radius':['8px 50% 0','заокруглення кутів'],'border-bottom':['1px~solid~#ccc none','рамка знизу'],
+  'box-sizing':['border-box content-box','як рахувати розмір'],'box-shadow':['0~4px~12px~rgba(0,0,0,.15) none','тінь'],
+  display:['block inline inline-block flex grid none','як показувати елемент'],position:['static relative absolute fixed sticky','спосіб позиціювання'],
+  top:['0 10px 50%','відступ від верху'],left:['0 10px 50%','відступ зліва'],right:['0 10px','відступ справа'],bottom:['0 10px','відступ знизу'],
+  'z-index':['1 10 100','що вище при накладанні'],
+  'justify-content':['flex-start center flex-end space-between space-around space-evenly','розподіл по головній осі'],
+  'align-items':['stretch flex-start center flex-end baseline','вирівнювання по поперечній осі'],
+  'flex-direction':['row column row-reverse column-reverse','напрямок flex'],'flex-wrap':['nowrap wrap','перенос на новий рядок'],
+  flex:['1 1~1~200px none','як елемент росте й стискається'],gap:['10px 20px','проміжок між елементами'],
+  'grid-template-columns':['repeat(3,~1fr) 1fr~1fr','стовпці сітки'],
+  opacity:['0 0.5 1','прозорість'],cursor:['pointer default not-allowed','вигляд курсора'],overflow:['hidden auto scroll visible','що робити з тим, що не вміщується'],
+  visibility:['visible hidden','видимість'],'list-style':['none disc decimal','маркери списку'],'object-fit':['cover contain','як вписати зображення'],
+  transition:['all~.3s transform~.2s background~.3s','плавна зміна'],transform:['scale(1.1) rotate(10deg) translateX(10px) translateY(-5px) none','перетворення'],
+  animation:['назва~2s~infinite назва~1s~ease','анімація з @keyframes'],'user-select':['none auto','чи можна виділяти текст']
+ };
+ const PSEUDO=':hover :active :focus :first-child :last-child :nth-child() ::before ::after';
+ const AT='@media @keyframes @import';
+ /* --- JavaScript: члени об'єктів. 'параметри через | ; опис ; тип результату' або '=prop ; опис ; тип' --- */
+ const M=o=>{const r={};for(const k in o){const [p,d,t]=o[k].split(' ; ');r[k]=p==='='?{prop:1,d,r:t}:{p:p?p.split('|'):[],d,r:t}}return r};
+ const T={};
+ T.element=M({textContent:'= ; текст усередині елемента ; string',innerHTML:'= ; HTML усередині елемента ; string',value:'= ; що введено в поле ; string',
+  style:'= ; CSS-стилі елемента ; style',classList:'= ; класи елемента ; classList',disabled:'= ; вимкнений (true/false) ; ',checked:'= ; чи позначено прапорець ; ',
+  src:'= ; адреса картинки ; string',href:'= ; адреса посилання ; string',id:'= ; id елемента ; string',className:'= ; класи одним рядком ; string',
+  hidden:'= ; сховати (true/false) ; ',children:'= ; дочірні елементи ; nodelist',parentElement:'= ; батьківський елемент ; element',
+  addEventListener:'подія|функція ; реакція на подію: "click", "input"… ; ',removeEventListener:'подія|функція ; прибрати реакцію ; ',
+  append:'елемент… ; додати в кінець ; ',prepend:'елемент… ; додати на початок ; ',remove:' ; видалити елемент ; ',
+  setAttribute:'атрибут|значення ; задати атрибут ; ',getAttribute:'атрибут ; значення атрибута ; string',
+  querySelector:'селектор ; перший елемент усередині ; element',querySelectorAll:'селектор ; усі елементи всередині ; nodelist',
+  closest:'селектор ; найближчий батьківський за селектором ; element',focus:' ; поставити курсор у поле ; ',click:' ; натиснути програмно ; '});
+ T.document=Object.assign({},M({querySelector:'селектор ; перший елемент: "#id", ".клас", "тег" ; element',querySelectorAll:'селектор ; усі елементи за селектором ; nodelist',
+  getElementById:'id ; елемент за id (без #) ; element',createElement:'тег ; новий елемент: "li", "div"… ; element',
+  body:'= ; елемент <body> ; element',title:'= ; назва вкладки ; string',addEventListener:'подія|функція ; реакція на подію ; '}));
+ T.classList=M({add:'клас… ; додати клас ; ',remove:'клас… ; прибрати клас ; ',toggle:'клас ; додати, якщо нема, і прибрати, якщо є ; ',contains:'клас ; чи є клас (true/false) ; '});
+ T.style=M({color:'= ; колір тексту ; string',backgroundColor:'= ; колір фону ; string',background:'= ; фон ; string',display:'= ; "none", "block", "flex" ; string',
+  width:'= ; ширина: "200px" ; string',height:'= ; висота ; string',fontSize:'= ; розмір шрифту ; string',transform:'= ; "scale(1.2)" ; string',
+  opacity:'= ; прозорість 0…1 ; string',left:'= ; відступ зліва ; string',top:'= ; відступ зверху ; string',margin:'= ; зовнішній відступ ; string',
+  padding:'= ; внутрішній відступ ; string',border:'= ; рамка ; string',borderRadius:'= ; заокруглення ; string'});
+ T.console=M({log:'значення… ; вивести в консоль браузера (F12) ; ',error:'значення… ; вивести помилку ; ',warn:'значення… ; попередження ; ',table:'дані ; вивести таблицею ; ',clear:' ; очистити консоль ; '});
+ T.math=M({random:' ; випадкове число від 0 до 1 ; number',floor:'x ; округлити вниз ; number',ceil:'x ; округлити вгору ; number',round:'x ; округлити ; number',
+  abs:'x ; модуль числа ; number',max:'a|b… ; найбільше ; number',min:'a|b… ; найменше ; number',sqrt:'x ; квадратний корінь ; number',pow:'x|y ; x у степені y ; number',
+  trunc:'x ; відкинути дробову частину ; number',PI:'= ; число π ; number'});
+ T.storage=M({setItem:'ключ|значення ; зберегти в браузері (рядком) ; ',getItem:'ключ ; прочитати збережене або null ; string',removeItem:'ключ ; видалити ; ',clear:' ; видалити все ; '});
+ T.json=M({stringify:'значення ; перетворити на рядок JSON ; string',parse:'рядок ; перетворити JSON на дані ; '});
+ T.string=M({length:'= ; кількість символів ; number',toUpperCase:' ; ВЕЛИКІ ЛІТЕРИ ; string',toLowerCase:' ; малі літери ; string',trim:' ; прибрати пробіли з країв ; string',
+  includes:'підрядок ; чи містить (true/false) ; ',indexOf:'підрядок ; позиція або -1 ; number',slice:'початок|кінець ; частина рядка ; string',
+  split:'роздільник ; розбити на масив ; array',replace:'що|на_що ; замінити перше входження ; string',replaceAll:'що|на_що ; замінити всі ; string',
+  startsWith:'початок ; чи починається з ; ',endsWith:'кінець ; чи закінчується на ; ',repeat:'n ; повторити n разів ; string',
+  padStart:'довжина|символ ; доповнити зліва: "5" → "05" ; string',charAt:'позиція ; символ за номером ; string'});
+ T.array=M({length:'= ; кількість елементів ; number',push:'елемент… ; додати в кінець ; number',pop:' ; забрати останній ; ',shift:' ; забрати перший ; ',
+  unshift:'елемент… ; додати на початок ; number',includes:'елемент ; чи є в масиві ; ',indexOf:'елемент ; позиція або -1 ; number',
+  join:'роздільник ; з\'єднати в рядок ; string',slice:'початок|кінець ; частина масиву ; array',splice:'позиція|скільки|нові… ; видалити / вставити ; array',
+  forEach:'функція ; для кожного елемента ; ',map:'функція ; новий масив з результатів ; array',filter:'функція ; лише ті, що підходять ; array',
+  find:'функція ; перший, що підходить ; ',sort:'функція ; відсортувати ; array',reverse:' ; у зворотному порядку ; array',concat:'масив ; об\'єднати масиви ; array'});
+ T.nodelist=M({length:'= ; кількість елементів ; number',forEach:'функція ; для кожного елемента ; '});
+ T.number=M({toFixed:'знаків ; рядок з n знаками після коми ; string',toString:' ; перетворити на рядок ; string'});
+ T.event=M({target:'= ; елемент, з яким сталася подія ; element',key:'= ; натиснута клавіша: "Enter", "a" ; string',code:'= ; код клавіші: "KeyA", "Space" ; string',
+  type:'= ; назва події ; string',clientX:'= ; x курсора ; number',clientY:'= ; y курсора ; number',preventDefault:' ; скасувати дію за замовчуванням ; '});
+ T.date=M({getHours:' ; години ; number',getMinutes:' ; хвилини ; number',getSeconds:' ; секунди ; number',getFullYear:' ; рік ; number',
+  getDate:' ; день місяця ; number',getDay:' ; день тижня (0 — неділя) ; number',getTime:' ; мілісекунди від 1970 р. ; number',toLocaleDateString:' ; дата текстом ; string',toLocaleTimeString:' ; час текстом ; string'});
+ T.window=M({innerWidth:'= ; ширина вікна ; number',innerHeight:'= ; висота вікна ; number',addEventListener:'подія|функція ; "resize", "keydown"… ; ',
+  alert:'текст ; вікно з повідомленням ; ',scrollTo:'x|y ; прокрутити ; ',localStorage:'= ; сховище браузера ; storage'});
+ T.numberCls=M({isInteger:'значення ; чи ціле число ; ',parseInt:'рядок ; ціле число з рядка ; number',parseFloat:'рядок ; дробове число з рядка ; number'});
+ const G=Object.assign(M({
+  alert:'текст ; вікно з повідомленням ; ',prompt:'питання|за_замовчуванням ; запитати в користувача (рядок або null) ; string',confirm:'питання ; так → true, ні → false ; ',
+  Number:'значення ; перетворити на число ; number',String:'значення ; перетворити на рядок ; string',parseInt:'рядок ; ціле число з рядка ; number',parseFloat:'рядок ; дробове число з рядка ; number',
+  isNaN:'значення ; чи це «не число» ; ',setTimeout:'функція|мс ; виконати один раз через мс ; number',setInterval:'функція|мс ; виконувати кожні мс, повертає id ; number',
+  clearInterval:'id ; зупинити setInterval ; ',clearTimeout:'id ; скасувати setTimeout ; ',Date:' ; дата й час: new Date() ; date'}),
+  {document:{prop:1,d:'сторінка (DOM)',r:'document'},console:{prop:1,d:'консоль браузера',r:'console'},Math:{prop:1,d:'математика',r:'math'},
+   localStorage:{prop:1,d:'сховище браузера',r:'storage'},JSON:{prop:1,d:'перетворення даних у рядок і назад',r:'json'},window:{prop:1,d:'вікно браузера',r:'window'}});
+ const KW='const let var function return if else for while do of in new true false null undefined break continue typeof switch case default try catch this class'.split(' ');
+ const EVENTS={click:'клік',dblclick:'подвійний клік',input:'зміна тексту в полі',change:'зміна значення (після вибору)',submit:'надсилання форми',
+  keydown:'натискання клавіші',keyup:'відпускання клавіші',mouseover:'наведення миші',mouseout:'миша пішла з елемента',mouseenter:'миша зайшла',mouseleave:'миша вийшла',
+  mousemove:'рух миші',focus:'фокус на полі',blur:'поле втратило фокус',load:'усе завантажилось',DOMContentLoaded:'сторінку побудовано',scroll:'прокрутка',resize:'зміна розміру вікна'};
+
+ /* --- збір імен із коду учня --- */
+ const CHAIN=/((?:[A-Za-z_$][\w$]*(?:\([^()]*\)|\[[^\[\]]*\])*\.)*[A-Za-z_$][\w$]*(?:\([^()]*\)|\[[^\[\]]*\])*)$/;
+ function resolve(chain,S){
+  const parts=chain.split('.');let t=null;
+  parts.forEach((raw,i)=>{
+   const idx=/\[[^\]]*\]$/.test(raw),n=raw.replace(/(\([^()]*\)|\[[^\[\]]*\])+$/,'');
+   if(i===0){
+    if(S.types[n])t=S.types[n];else if(n==='Number')t=/\(/.test(raw)?'number':'numberCls';
+    else if(G[n])t=G[n].r||null;else if(S.vars.has(n))t=S.types[n]||null;else t=null;
+    if(n==='Date'&&/^new\s/.test(chain))t='date';
+   }else{const mm=t&&T[t]&&T[t][n];t=mm?mm.r||null:null}
+   if(idx)t=t==='array'?null:t==='nodelist'?'element':t==='string'?'string':null;
+  });
+  return t;
+ }
+ function infer(rhs,S){
+  rhs=rhs.trim();
+  if(/^["'`]/.test(rhs))return /^["'`][^"'`]*["'`]\s*$/.test(rhs)||/^[`"']/.test(rhs)?'string':null;
+  if(/^\[/.test(rhs))return 'array';if(/^-?\d/.test(rhs))return 'number';if(/^new\s+Date\b/.test(rhs))return 'date';
+  const m=/^[A-Za-z_$][\w$]*(?:\([^()]*\)|\[[^\[\]]*\])*(?:\.[A-Za-z_$][\w$]*(?:\([^()]*\)|\[[^\[\]]*\])*)*/.exec(rhs);
+  return m?resolve(m[0],S):null;
+ }
+ function scanJs(code){
+  const S={types:{},vars:new Set(),defs:{}};
+  code=code.replace(/\/\*[\s\S]*?\*\/|\/\/[^\n]*/g,'');
+  for(const m of code.matchAll(/\bfunction\s+([A-Za-z_$][\w$]*)\s*\(([^)]*)\)/g))S.defs[m[1]]={p:m[2].split(',').map(s=>s.trim()).filter(Boolean),d:'твоя функція',own:1};
+  for(const m of code.matchAll(/\b(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*(?:async\s*)?(?:function\s*\(([^)]*)\)|\(([^)]*)\)\s*=>|([A-Za-z_$][\w$]*)\s*=>)/g))
+   S.defs[m[1]]={p:(m[2]||m[3]||m[4]||'').split(',').map(s=>s.trim()).filter(Boolean),d:'твоя функція',own:1};
+  for(const m of code.matchAll(/\b(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*(?:=\s*([^;\n]*))?/g)){
+   S.vars.add(m[1]);if(m[2]!==undefined&&!S.defs[m[1]]){const t=infer(m[2],S);if(t)S.types[m[1]]=t}
+  }
+  for(const m of code.matchAll(/\bfor\s*\(\s*(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s+of\s+([A-Za-z_$][\w$.]*)/g)){const t=resolve(m[2],S);if(t==='nodelist')S.types[m[1]]='element';else if(t==='string')S.types[m[1]]='string'}
+  for(const m of code.matchAll(/(?:function\s*[\w$]*\s*\(([^)]*)\)|\(([^()]*)\)\s*=>|\b([A-Za-z_$][\w$]*)\s*=>)/g))
+   (m[1]||m[2]||m[3]||'').split(',').forEach(x=>{const n=x.split('=')[0].trim();if(/^[A-Za-z_$][\w$]*$/.test(n)){S.vars.add(n);if(/^(e|ev|evt|event)$/.test(n))S.types[n]='event'}});
+  for(const m of code.matchAll(/\.forEach\(\s*(?:function\s*\(\s*|\(\s*)?([A-Za-z_$][\w$]*)/g)){
+   const before=code.slice(Math.max(0,m.index-120),m.index),c=CHAIN.exec(before);const t=c&&resolve(c[1],S);if(t==='nodelist')S.types[m[1]]='element'}
+  return S;
+ }
+ function sel(html){
+  const ids=new Set(),cls=new Set(),tags=new Set();
+  html=html.replace(/<!-[-][\s\S]*?-->/g,'');
+  for(const m of html.matchAll(/<([a-z][a-z0-9]*)\b([^>]*)>/gi)){tags.add(m[1].toLowerCase());
+   const i=/\bid\s*=\s*["']([^"']+)/i.exec(m[2]);if(i)ids.add(i[1]);
+   const c=/\bclass\s*=\s*["']([^"']+)/i.exec(m[2]);if(c)c[1].split(/\s+/).filter(Boolean).forEach(x=>cls.add(x))}
+  return {ids:[...ids],cls:[...cls],tags:[...tags]};
+ }
+ function cssNames(css){
+  const ids=new Set(),cls=new Set();
+  css=css.replace(/\/\*[\s\S]*?\*\//g,'').replace(/\{[^{}]*\}/g,'{}');
+  for(const m of css.matchAll(/\.([A-Za-z_-][\w-]*)/g))cls.add(m[1]);
+  for(const m of css.matchAll(/#([A-Za-z_-][\w-]*)/g))if(!/^[0-9a-f]{3,8}$/i.test(m[1]))ids.add(m[1]);
+  return {ids:[...ids],cls:[...cls]};
+ }
+ const htmlCode=()=>lang==='h'?ta.value:getCode(cur,'h');
+ const cssCode=()=>(lang==='c'?ta.value:getCode(cur,'c'))+'\n'+[...htmlCode().matchAll(/<style\b[^>]*>([\s\S]*?)(?:<\/style>|$)/gi)].map(m=>m[1]).join('\n');
+ const jsCode=()=>(lang==='j'?ta.value:getCode(cur,'j'))+'\n'+[...htmlCode().matchAll(/<script\b[^>]*>([\s\S]*?)(?:<\/script>|$)/gi)].map(m=>m[1]).join('\n');
+
+ /* --- стан JS до курсора: рядки, коментарі, відкриті дужки --- */
+ function jsCtx(text){
+  const st=[];let q=null,qs=0,com=0;
+  for(let i=0;i<text.length;i++){
+   const c=text[i];
+   if(com===1){if(c==='\n')com=0;continue}
+   if(com===2){if(c==='*'&&text[i+1]==='/'){com=0;i++}continue}
+   if(q){if(c==='\\'){i++;continue}if(c===q||c==='\n'&&q!=='`')q=null;continue}
+   if(c==='/'&&text[i+1]==='/'){com=1;i++;continue}
+   if(c==='/'&&text[i+1]==='*'){com=2;i++;continue}
+   if(c==='"'||c==="'"||c==='`'){q=c;qs=i+1;continue}
+   if(c==='('||c==='['||c==='{'){const m=c==='('&&CHAIN.exec(text.slice(Math.max(0,i-200),i).replace(/\s+$/,''));st.push({c,callee:m?m[1]:'',arg:0,start:i+1});continue}
+   if(c===')'||c===']'||c==='}'){st.pop();continue}
+   if(c===','&&st.length){const t=st[st.length-1];t.arg++;t.start=i+1}
+  }
+  let f=null;for(let k=st.length-1;k>=0;k--)if(st[k].c==='('){f=st[k];break}
+  const top=st.length?st[st.length-1]:null;
+  return {q,str:q?text.slice(qs):'',com:!!com,frame:f,top};
+ }
+ function lookup(callee,S){
+  const i=callee.lastIndexOf('.');
+  const name=(i<0?callee:callee.slice(i+1)).replace(/(\([^()]*\)|\[[^\[\]]*\])+$/,'');
+  if(i<0)return S.defs[name]||(G[name]&&!G[name].prop?G[name]:null);
+  const t=resolve(callee.slice(0,i),S);
+  if(t&&T[t])return T[t][name]&&!T[t][name].prop?T[t][name]:null;
+  for(const k of ['element','document','classList','string','array','console','math','storage','json'])if(T[k][name]&&!T[k][name].prop)return T[k][name];
+  return null;
+ }
+
+ /* --- що підказати в цьому місці --- */
+ const ent=(o,f)=>Object.entries(o).map(([n,x])=>[n,f?f(x,n):x]);
+ const vals=s=>sp(s).map(v=>[v.replace(/~/g,' '),{d:''}]);
+ function cssCands(text,inline){
+  // text — CSS від початку файлу / <style> / атрибута style="" до курсора
+  if(/\/\*(?![\s\S]*\*\/)/.test(text))return null;
+  const clean=text.replace(/\/\*[\s\S]*?\*\//g,m=>' '.repeat(m.length)).replace(/"[^"\n]*"|'[^'\n]*'/g,m=>'"'+' '.repeat(m.length-2)+'"');
+  const st=inline?['rule']:[];let last=0;
+  for(let i=0;i<clean.length;i++){const c=clean[i];
+   if(c==='{'){const h=clean.slice(last,i).trim();st.push(/^@(media|supports)/.test(h)?'group':/^@[\w-]*keyframes/.test(h)?'kf':'rule');last=i+1}
+   else if(c==='}'){st.pop();last=i+1}else if(c===';')last=i+1}
+  const decl=clean.slice(last),top=st[st.length-1];
+  if(/"[^"]*$/.test(decl)||/\/\*/.test(decl))return null;
+  let m;
+  if(top!=='rule'){
+   if(top==='kf'||(decl.match(/\(/g)||[]).length>(decl.match(/\)/g)||[]).length)return null;
+   if((m=/(?:^|[\s,])(@[\w-]*)$/.exec(decl)))return {pref:m[1],c:vals(AT).map(([n])=>[n,{d:n==='@media'?'стилі для певної ширини екрана':n==='@keyframes'?'кроки анімації':'підключити інший CSS'}])};
+   if((m=/[\w\])*-](:{1,2}[\w-]*)$/.exec(decl)))return {pref:m[1],c:vals(PSEUDO).map(([n])=>[n,{d:{':hover':'під курсором',':active':'під час натискання',':focus':'у фокусі',':nth-child()':'елемент за номером',':first-child':'перший',':last-child':'останній'}[n]||''}])};
+   return null;
+  }
+  if((m=/^\s*([\w-]+)\s*:\s*(?:[^:]*\s)?([\w#().%-]*)$/.exec(decl))){const p=CP[m[1]];return p?{pref:m[2],c:vals(p[0]+' inherit')}:null}
+  if((m=/^\s*([a-z-]+)$/.exec(decl)))return {pref:m[1],c:ent(CP,x=>({d:x[1],css:1}))};
+  return null;
+ }
+ function jsCands(text,S){
+  const c=jsCtx(text);if(c.com)return null;
+  if(c.q){
+   // у лапках: назви подій, селектори, класи, теги
+   const f=c.frame;if(!f||!f.callee||c.q==='`'||f.arg!==0||text.slice(f.start).trim()[0]!==c.q)return null;
+   const fn=f.callee.split('.').pop(),pref=c.str;
+   if(fn==='addEventListener')return {pref,c:ent(EVENTS,d=>({d}))};
+   const H=sel(htmlCode()),C=cssNames(cssCode());
+   if(fn==='getElementById')return {pref,c:H.ids.map(n=>[n,{d:'id з HTML'}])};
+   if(/^(add|remove|toggle|contains)$/.test(fn)&&/classList$/.test(f.callee.slice(0,f.callee.lastIndexOf('.'))))return {pref,c:[...new Set([...C.cls,...H.cls])].map(n=>[n,{d:'клас'}])};
+   if(fn==='createElement')return {pref,c:ent(TG,x=>({d:x.d}))};
+   if(/^(querySelector|querySelectorAll|closest)$/.test(fn))return {pref,c:[...H.ids.map(n=>['#'+n,{d:'id з HTML'}]),...[...new Set([...H.cls,...C.cls])].map(n=>['.'+n,{d:'клас'}]),...H.tags.map(n=>[n,{d:'тег'}])]};
+   return null;
+  }
+  const line=text.slice(text.lastIndexOf('\n')+1);let m;
+  if(/\d[\w.]*$/.test(line)&&!/[A-Za-z_$][\w$]*$/.test(line))return null;
+  if((m=/\.\s*([A-Za-z_$][\w$]*)?$/.exec(line))){
+   const pref=m[1]||'',head=line.slice(0,line.length-m[0].length).replace(/\s+$/,''),ch=CHAIN.exec(head);
+   if(!ch)return null;
+   const t=resolve(ch[1],S);
+   if(t&&T[t])return {pref,c:ent(T[t])};
+   if(!pref)return null;
+   const u={};for(const k of ['element','string','array','classList'])for(const [n,x] of Object.entries(T[k]))if(!u[n])u[n]=x;
+   return {pref,c:ent(u)};
+  }
+  if((m=/(?:^|[^\w$.])([A-Za-z_$][\w$]*)$/.exec(line))){
+   const pref=m[1];
+   if(/\b(?:const|let|var|function|class)\s+[\w$]*$/.test(line)||/\bfor\s*\(\s*(?:const|let|var)\s+\w*$/.test(line))return null;
+   if(pref.length<2)return null;
+   const seen=new Map();
+   Object.entries(S.defs).forEach(([n,x])=>seen.set(n,x));
+   S.vars.forEach(n=>{if(!seen.has(n))seen.set(n,{prop:1,d:'змінна',own:1})});
+   Object.entries(G).forEach(([n,x])=>{if(!seen.has(n))seen.set(n,x)});
+   KW.forEach(n=>{if(!seen.has(n))seen.set(n,{kw:1,d:''})});
+   return {pref,c:[...seen]};
+  }
+  return null;
+ }
+ function htmlCands(text){
+  // усередині <style>/<script> — інша мова
+  const lc=text.toLowerCase();
+  const ci=lc.lastIndexOf('<!-'+'-');if(ci>=0&&ci>lc.lastIndexOf('-->'))return null;
+  for(const [tg,l] of [['style','c'],['script','j']]){
+   const re=new RegExp('<'+tg+'\\b[^>]*>','gi');let open=-1,mm;while((mm=re.exec(lc)))open=mm.index+mm[0].length;
+   if(open>=0&&lc.indexOf('</'+tg,open)<0){const code=text.slice(open);return l==='c'?cssCands(code,false):jsCands(code,scanJs(jsCode()))}
+  }
+  const lt=text.lastIndexOf('<');if(lt<0||lt<text.lastIndexOf('>'))return null;   // звичайний текст між тегами
+  const t=text.slice(lt);let m;
+  if((m=/^<(\/?)([a-zA-Z][\w-]*)?$/.exec(t))){
+   const pref=m[2]||'';
+   if(m[1]){const stack=[];for(const x of text.slice(0,lt).replace(/<!-[-][\s\S]*?-->/g,'').matchAll(/<(\/?)([a-zA-Z][\w-]*)[^>]*>/g)){const n=x[2].toLowerCase();if(VOID.test(n))continue;if(x[1]){const k=stack.lastIndexOf(n);if(k>=0)stack.length=k}else stack.push(n)}
+    return stack.length?{pref,c:[[stack[stack.length-1],{d:'закрити тег'}]],close:1}:null}
+   return {pref,c:ent(TG,x=>({d:x.d,tag:1}))};
+  }
+  m=/^<([a-zA-Z][\w-]*)(\s[\s\S]*)?$/.exec(t);if(!m||!m[2])return null;
+  const tag=m[1].toLowerCase(),rest=m[2];
+  const qs=rest.replace(/"[^"]*"|'[^']*'/g,'');
+  if((m=/([\w-]+)\s*=\s*(["'])([^"']*)$/.exec(rest))&&/["'][^"']*$/.test(qs)){
+   const at=m[1].toLowerCase(),pref=m[3];
+   if(at==='style'){const r=cssCands(pref,true);return r}
+   if(at==='class'){const C=cssNames(cssCode()),w=pref.split(/\s+/).pop();return {pref:w,c:C.cls.map(n=>[n,{d:'клас із CSS'}])}}
+   if(at==='id'&&tag!=='label'){const C=cssNames(cssCode());return {pref,c:C.ids.map(n=>[n,{d:'id із CSS'}])}}
+   if(at==='for')return {pref,c:sel(htmlCode()).ids.map(n=>[n,{d:'id поля'}])};
+   if(at==='href'&&tag==='link'&&/stylesheet/i.test(rest))return {pref,c:[['style.css',{d:''}]]};
+   const v=AV[tag+' '+at];return v?{pref,c:vals(v)}:null;
+  }
+  if(/["']/.test(qs)||/=\s*$/.test(rest))return null;
+  if((m=/\s([\w-]*)$/.exec(rest))){
+   const pref=m[1],used=new Set([...rest.matchAll(/([\w-]+)\s*=/g)].map(x=>x[1].toLowerCase()));
+   const own=(TG[tag]?TG[tag].a:[]).concat(sp(GA)).filter(a=>!used.has(a));
+   return {pref,c:own.map(a=>[a,{d:AD[a]||'',attr:1}])};
+  }
+  return null;
+ }
+ function cands(){
+  const s=ta.selectionStart,text=ta.value.slice(Math.max(0,s-6000),s);
+  if(lang==='h')return htmlCands(text);
+  if(lang==='c')return cssCands(text,false);
+  return jsCands(text,scanJs(jsCode()));
+ }
+
+ /* --- інтерфейс --- */
+ const KEY='lw:ac';
+ let on=true;try{on=localStorage.getItem(KEY)!=='0'}catch(e){}
+ const box=document.createElement('div');box.className='acl';box.hidden=true;box.setAttribute('role','listbox');
+ const tip=document.createElement('div');tip.className='act';tip.hidden=true;
+ document.body.append(box,tip);
+ let items=[],sel_=0,moved=false,rng=null,cw=0,cur_=null;
+ function charW(){
+  if(cw)return cw;const cs=getComputedStyle(ta),c=document.createElement('canvas').getContext('2d');
+  c.font=cs.fontStyle+' '+cs.fontWeight+' '+cs.fontSize+' '+cs.fontFamily;cw=c.measureText('M'.repeat(20)).width/20||8.4;return cw;
+ }
+ function caretXY(){
+  const s=ta.selectionStart,v=ta.value,ls=v.lastIndexOf('\n',s-1)+1,line=(v.slice(0,s).match(/\n/g)||[]).length,r=ta.getBoundingClientRect();
+  const cs=getComputedStyle(ta),lh=parseFloat(cs.lineHeight)||21;
+  return {x:r.left+parseFloat(cs.paddingLeft)+(s-ls)*charW()-ta.scrollLeft,y:r.top+parseFloat(cs.paddingTop)+line*lh-ta.scrollTop,lh,r};
+ }
+ function place(el,below){
+  const c=caretXY();if(c.y<c.r.top-c.lh/2||c.y>c.r.bottom-c.lh/2){el.hidden=true;return}
+  el.style.left='0px';el.style.top='0px';
+  const w=el.offsetWidth,h=el.offsetHeight,vw=document.documentElement.clientWidth,vh=innerHeight;
+  const x=Math.max(8,Math.min(Math.max(c.r.left,Math.min(c.x,c.r.right))-4,vw-w-8));let y;
+  if(below){y=c.y+c.lh+2;if(y+h>vh-4)y=c.y-h-4-(tip.hidden?0:tip.offsetHeight+4)}
+  else{y=c.y-h-4;if(y<4)y=c.y+c.lh+2+(box.hidden?0:box.offsetHeight+4)}
+  el.style.left=x+'px';el.style.top=Math.max(4,y)+'px';
+ }
+ const hideList=()=>{box.hidden=true;items=[]};
+ const hide=()=>{hideList();tip.hidden=true};
+ function sigHTML(sg,name,fr,curArg){
+  const ps=sg.p;let a=fr.arg,act=a<ps.length?a:-1;
+  if(act<0){const r=ps.findIndex(p=>p.endsWith('…'));if(r>=0&&a>=r)act=r}
+  return '<code>'+h_(name)+'(<span>'+ps.map((p,i)=>i===act?'<b>'+h_(p)+'</b>':h_(p)).join(', ')+'</span>)</code>'+(sg.d?'<small>'+h_(sg.d)+'</small>':'');
+ }
+ function updateTip(){
+  const s=ta.selectionStart;if(s!==ta.selectionEnd){tip.hidden=true;return}
+  let text=ta.value.slice(Math.max(0,s-6000),s);
+  if(lang==='h'){
+   const lc=text.toLowerCase(),re=/<script\b[^>]*>/gi;let open=-1,mm;while((mm=re.exec(lc)))open=mm.index+mm[0].length;
+   if(open<0||lc.indexOf('<\/script',open)>=0){tip.hidden=true;return}
+   const ci=lc.lastIndexOf('<!-'+'-');if(ci>open){tip.hidden=true;return}
+   text=text.slice(open);
+  }else if(lang!=='j'){tip.hidden=true;return}
+  const c=jsCtx(text),fr=c.frame;
+  if(c.com||!fr||!fr.callee||c.top&&c.top.c==='{'&&c.top.start>fr.start){tip.hidden=true;return}
+  const sg=lookup(fr.callee,scanJs(jsCode()));if(!sg||!sg.p||!sg.p.length){tip.hidden=true;return}
+  tip.innerHTML=sigHTML(sg,fr.callee.split('.').pop().replace(/(\([^()]*\)|\[[^\[\]]*\])+$/,''),fr);
+  tip.hidden=false;place(tip,false);
+ }
+ function updateList(){
+  const s=ta.selectionStart;if(s!==ta.selectionEnd){hideList();return}
+  const r=cands();if(!r){hideList();return}
+  const low=r.pref.toLowerCase();
+  items=r.c.filter(([n])=>n.toLowerCase().startsWith(low)&&n!==r.pref)
+   .sort((a,b)=>(b[1].own?1:0)-(a[1].own?1:0)||(low?a[0].length-b[0].length:0)||(low?a[0].localeCompare(b[0]):0)).slice(0,40);
+  if(!items.length){hideList();return}
+  cur_=r;rng=[s-r.pref.length,s];sel_=0;moved=false;render();
+ }
+ function render(){
+  box.innerHTML=items.map(([n,x],i)=>'<div class="aci'+(i===sel_?' on':'')+'" data-i="'+i+'" role="option"><code>'+h_(n)+(x.p?'('+')':'')+'</code>'+(x.d?'<span>'+h_(x.d)+'</span>':'')+'</div>').join('');
+  box.hidden=false;place(box,true);
+  const a=box.children[sel_];if(a)a.scrollIntoView({block:'nearest'});
+ }
+ let busy=false;
+ function accept(i){
+  const [n,x]=items[i],r=cur_;hideList();
+  busy=true;ta.setSelectionRange(rng[0],rng[1]);
+  const v=ta.value,after=v[rng[1]]||'';let t=n,back=0,again=false;
+  if(x.p&&!x.prop&&!x.kw&&after!=='('){t=n+'()';back=x.p.length?1:0}
+  else if(x.css){t=n+(after===':'?'':': ');again=after!==':'}
+  else if(x.attr&&!BOOL.test(n)&&after!=='='){t=n+'=""';back=1;again=true}
+  else if(r&&r.close&&after!=='>')t=n+'>';
+  ins(t);if(back)ta.setSelectionRange(ta.selectionStart-back,ta.selectionStart-back);
+  busy=false;refresh(again);
+ }
+ function refresh(list){
+  if(!on||ta.readOnly){hide();return}
+  if(list||!box.hidden)updateList();
+  updateTip();
+ }
+ const TRIG=/[\w$.<\/ "'=:#@-]$/;
+ ta.addEventListener('input',e=>{if(busy)return;const d=e.data,it=e.inputType||'';
+  refresh((it==='insertText'||it==='insertCompositionText')&&d&&TRIG.test(d)||it==='deleteContentBackward'&&!box.hidden)});
+ ta.addEventListener('click',()=>{hideList();refresh(false)});
+ ta.addEventListener('keyup',e=>{if(/^(Arrow(Left|Right)|Home|End|PageUp|PageDown)$/.test(e.key)){hideList();refresh(false)}});
+ ta.addEventListener('blur',()=>setTimeout(()=>{if(document.activeElement!==ta)hide()},150));
+ const repos=()=>{if(!box.hidden)place(box,true);if(!tip.hidden)place(tip,false)};
+ ta.addEventListener('scroll',repos);addEventListener('scroll',repos,true);
+ addEventListener('resize',()=>{cw=0;hide()});
+ box.addEventListener('pointerdown',e=>{e.preventDefault();const r=e.target.closest('.aci');if(r)accept(+r.dataset.i)});
+ box.addEventListener('mousedown',e=>e.preventDefault());
+ // перехоплюємо клавіші раніше за Tab/Enter редактора
+ ta.parentNode.addEventListener('keydown',e=>{
+  if(e.target!==ta||!on||ta.readOnly||e.isComposing)return;
+  let done=false;
+  if(!box.hidden&&items.length){
+   if(e.key==='ArrowDown'||e.key==='ArrowUp'){sel_=(sel_+(e.key==='ArrowDown'?1:items.length-1))%items.length;moved=true;render();done=true}
+   else if(e.key==='Tab'&&!e.shiftKey||e.key==='Enter'&&moved&&!e.shiftKey&&!e.ctrlKey){accept(sel_);done=true}
+   else if(e.key==='Escape'){hideList();done=true}
+   else if(e.key==='Enter')hideList();
+  }else if(e.key==='Escape'&&!tip.hidden){tip.hidden=true;done=true}
+  if(done){e.preventDefault();e.stopPropagation()}
+ },true);
+ return {hide,get on(){return on},set on(v){on=!!v;try{localStorage.setItem(KEY,on?'1':'0')}catch(e){}if(!on)hide()}};
+})();
 
 /* ---------- попередній перегляд ---------- */
 let pt;
@@ -892,6 +1316,7 @@ rz.onkeydown=e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault(
 rz.ondblclick=()=>{mainEl.style.removeProperty('--lc');delete ui.lc;store.set('ui',ui)};
 /* ---------- прогрес: файл і шкільний режим ---------- */
 $('#schB').hidden=!SCH;$('#schB').onclick=()=>openInfo();
+$('#acT').checked=AC.on;$('#acT').onchange=e=>{AC.on=e.target.checked};
 $('#schT').checked=SCH;
 $('#schT').onchange=e=>{try{if(e.target.checked){localStorage.setItem(SKEY,'1');wipe(localStorage)}else localStorage.removeItem(SKEY)}catch(x){}location.reload()};
 $('#pSave').onclick=()=>{
