@@ -196,6 +196,14 @@ svg.art{width:100%;height:auto;display:block;fill:var(--tx);stroke:none;stroke-w
 .ml b{width:18px;height:18px;flex:none;border-radius:50%;border:1.5px solid var(--bd);display:grid;place-items:center;font-size:10px;color:var(--mu);font-weight:600}
 .ml.d b{background:var(--ok);border-color:var(--ok);color:#fff}.ml b svg{width:11px;height:11px;stroke-width:3}
 .hcards{display:flex;flex-direction:column;gap:14px}
+.qs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:14px}
+.qc{display:flex;gap:14px;align-items:center;text-decoration:none;color:inherit;transition:.2s}
+.qc:hover{border-color:var(--ac);transform:translateY(-2px)}
+.qc .qi{width:52px;height:52px;flex:none;border-radius:14px;display:grid;place-items:center;background:var(--sf2);border:1px solid var(--bd)}
+.qc .qi svg{width:32px;height:32px;stroke:none}
+.qc b{display:block;font-size:16px;color:var(--tx)}.qc span{display:block;font-size:14px;color:var(--mu)}
+.qc .go{margin-left:auto;color:var(--ac);flex:none}.qc .go svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#lesson .qs{margin-top:16px}
 .hf{margin-top:40px;padding:20px 0 4px;border-top:1px solid var(--bd);display:flex;flex-wrap:wrap;gap:8px 18px;justify-content:space-between;color:var(--mu);font-size:14px}
 .hf a{color:var(--ac)}
 .mc{max-height:calc(100vh - 32px);overflow:auto}
@@ -333,6 +341,7 @@ svg.art{width:100%;height:auto;display:block;fill:var(--tx);stroke:none;stroke-w
 </svg></div>
  </section>
  <section class="sec" id="program" aria-labelledby="ph"><h3 id="ph">Програма курсу</h3><p>Три модулі: від структури сторінки до інтерактивності. Натисни на урок, щоб відкрити його.</p><div class="mods" id="mods"></div></section>
+ <section class="sec" id="quests" aria-labelledby="qh"><h3 id="qh">Ігри й тести</h3><p>Перевір себе після курсу.</p><div class="qs" id="qlist"></div></section>
  <div id="promoHome"></div>
  <section class="sec" aria-labelledby="bh"><h3 id="bh">Бонус</h3><p>Корисні інструменти, безкоштовні відеокурси українською та міні-гра, створена лише на HTML, CSS і JavaScript.</p><div class="hcards" id="bonus"></div></section>
  <footer class="hf"><span>Веб-програмування · HTML, CSS, JavaScript</span><a href="https://github.com/whyuxavier/learn-web" target="_blank" rel="noopener noreferrer">GitHub — whyuxavier/learn-web</a></footer>
@@ -1126,6 +1135,11 @@ $('#tabs').onclick=e=>{const b=e.target.closest('.tab');if(b){lang=b.dataset.l;l
 
 
 /* ---------- промо Python ---------- */
+const QGO='<svg viewBox="0 0 24 24"><path d="M7 17L17 7M9 7h8v8"/></svg>';
+const QUESTS=[
+ {u:'https://whyuxavier.github.io/ghost-in-html/',t:'Ghost in HTML',d:'Квест: виправ код сайту й визволи привида',i:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20.5V11a7 7 0 0 1 14 0v9.5l-2.3-1.6-2.4 1.6-2.3-1.6-2.3 1.6-2.4-1.6z" fill="#a9b8ec"/><circle cx="9.5" cy="11" r="1.4" fill="#2b3150"/><circle cx="14.5" cy="11" r="1.4" fill="#2b3150"/><path d="M10.5 14.5h3" stroke="#2b3150" stroke-width="1.4" stroke-linecap="round"/><path d="M1.5 6.5 3.5 5 1.5 3.5M22.5 3.5 20.5 5l2 1.5" stroke="#f0c75e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>'},
+ {u:'https://whyuxavier.github.io/bug-storm/',t:'Баг-шторм',d:'Гра й тест: виправ помилки в HTML і CSS',i:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6.5a3 3 0 0 1 6 0z" fill="#f0c75e"/><rect x="6.5" y="7.5" width="11" height="13" rx="5.5" fill="#6f8ad6"/><path d="M12 8.5v11" stroke="#fff" stroke-width="1.4"/><path d="M6.5 11H3.5M6.5 15H3M7.5 19l-2.5 2M17.5 11h3M17.5 15h3.5M16.5 19l2.5 2M10 4.5 8.5 2.5M14 4.5l1.5-2" stroke="#6f8ad6" stroke-width="1.6" stroke-linecap="round" fill="none"/><circle cx="9.5" cy="12" r="1" fill="#fff"/><circle cx="14.5" cy="16" r="1" fill="#fff"/></svg>'}];
+const qcard=q=>'<a class="card qc" href="'+q.u+'" target="_blank" rel="noopener noreferrer"><span class="qi">'+q.i+'</span><span><b>'+esc(q.t)+'</b><span>'+esc(q.d)+'</span></span><span class="go">'+QGO+'</span></a>';
 const PROMO='<a class="card promo" href="https://whyuxavier.github.io/learn-python/" target="_blank" rel="noopener noreferrer"><span class="pi"><svg viewBox="361 102 24 24" aria-hidden="true"><path d="M373 103c-4 0-5 1.4-5 3.2v2.6h5.3v1.3h-7.5c-2.2 0-3.6 1.8-3.6 4.4s1.4 4.4 3.6 4.4h2.2v-3.1c0-2.2 1.3-3.5 3.5-3.5h4.8c1.8 0 3.1-1.3 3.1-3.1v-3c0-1.8-1.8-3.2-6.4-3.2z" fill="#6f8ad6"/><path d="M373 125c4 0 5-1.4 5-3.2v-2.6h-5.3v-1.3h7.5c2.2 0 3.6-1.8 3.6-4.4s-1.4-4.4-3.6-4.4H378v3.1c0 2.2-1.3 3.5-3.5 3.5h-4.8c-1.8 0-3.1 1.3-3.1 3.1v3c0 1.8 1.8 3.2 6.4 3.2z" fill="#f0c75e"/></svg></span><span class="pt"><small>Можливо, ти також захочеш вивчити</small><b>Python з нуля</b><span class="pills"><span>print("Hello, world!")</span><span>tkinter</span><span>turtle</span></span></span><span class="btn">Відкрити курс →</span></a>';
 
 /* ---------- бонус ---------- */
@@ -1226,7 +1240,7 @@ function renderLesson(){
  '<button class="btn pr tonext" id="toTask">До завдання →</button></div>'+
  '<div class="lp" id="p-tk" role="tabpanel" aria-labelledby="t-tk">'+
  '<div class="card task"><h2>Урок '+(cur+1)+'. Практичне завдання</h2><p><b>'+esc(l.task)+'</b></p><ul>'+l.ok.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>'+
- (cur===0?'<button class="btn pr" id="cpbp">Копіювати HTML-структуру</button>':'')+'</div>'+(cur===11?PROMO:'')+
+ (cur===0?'<button class="btn pr" id="cpbp">Копіювати HTML-структуру</button>':'')+'</div>'+(cur===11?'<div class="qs">'+QUESTS.map(q=>qcard(Object.assign({},q,{d:'Перевір себе: '+q.d}))).join('')+'</div>'+PROMO:'')+
  '<div class="nav"><button class="btn" id="prev"'+(cur?'':' disabled')+'>← Назад</button><span class="sp"></span>'+
  '<button class="btn'+(d?' done':'')+'" id="mark" aria-pressed="'+d+'">'+(d?'Виконано':'Позначити виконаним')+'</button>'+
  '<button class="btn pr" id="next">'+(cur===11?'На головну →':'Далі →')+'</button></div></div>';
@@ -1256,6 +1270,7 @@ $('#ltabs').onkeydown=e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preven
 
 /* ---------- головна сторінка ---------- */
 $('#promoHome').outerHTML=PROMO;
+$('#qlist').innerHTML=QUESTS.map(qcard).join('');
 function renderHome(){
  const started=done.length>0||cur>0;
  $('#startTx').textContent=started?'Продовжити: урок '+(cur+1):'Почати навчання';
