@@ -3,13 +3,14 @@
    отримали нову версію), без мережі або якщо мережа мовчить довше 4 с — збережена копія.
    Шрифт Fixel: кешується вже під час встановлення (з першого відвідування)
    і далі віддається з кешу. */
-const VERSION = '2026-11-10';
+const VERSION = '2026-11-11';
 const SHELL = 'lw-shell-' + VERSION;   // сторінка, маніфест, іконки
 const ASSETS = 'lw-assets';            // шрифти (переживають оновлення SW)
 const SHELL_FILES = [
   './',
   'style.css',
   'script.js',
+  'snow.js',
   'manifest.json',
   'icons/icon-192.png',
   'icons/icon-512.png',

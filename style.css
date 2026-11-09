@@ -124,6 +124,8 @@ body.drag{user-select:none;cursor:col-resize}.drag iframe{pointer-events:none}
 .li.bn b{border-color:var(--ac);color:var(--ac)}.li.bn b svg{opacity:1}
 
 /* ---------- головна ---------- */
+#snow{position:fixed;inset:0;z-index:0;pointer-events:none}
+body.home .app{position:relative;z-index:1}
 #home{display:none}
 body.home #home{display:block;overflow-x:clip}
 body.home .app{height:auto;min-height:0;grid-template-columns:minmax(0,1fr);grid-template-rows:56px}
