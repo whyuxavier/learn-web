@@ -456,7 +456,7 @@ h1 {
     background: white;
 }`,
  task:'Оформ сторінку-профіль, створену в уроці 1.',
- ok:['Твій HTML з уроку 1 уже перенесено в редактор (якщо там було порожньо — використано шаблон).','Змінений колір і шрифт тексту.','Фон сторінки.','Стиль для класу (додай class до свого тега в HTML).','Відступи між абзацами.'],
+ ok:['Твій HTML з уроку 1 уже перенесено в редактор (якщо урок 1 ще не виконано — відкрито шаблон сторінки-профілю).','Змінений колір і шрифт тексту.','Фон сторінки.','Стиль для класу (додай class до свого тега в HTML).','Відступи між абзацами.'],
  h:D('Мій профіль','    <h1>Привіт, я Олена</h1>\n    <p class="intro">Я навчаюся у 10 класі й вивчаю вебпрограмування.</p>\n    <p>Моя улюблена мова — <strong>HTML</strong>.</p>'),
  c:'/* Оформи сторінку тут */\nbody {\n    \n}\n\nh1 {\n    \n}\n\np {\n    \n}',j:''},
 
@@ -667,10 +667,17 @@ const HL={h:hlHtml,c:hlCss,j:hlJs};
 const codeKey=(i,l)=>'code:'+i+':'+l;
 const starter=(i,l)=>LESSONS[i][l];
 let shared=null;
+/* Сторінка з уроку 1 переноситься в урок 4, лише якщо в ній уже є вміст;
+   порожній каркас (урок 1 не виконано) — тоді береться шаблон уроку 4. */
+const hasBody=src=>{
+ if(typeof src!=='string'||!src.trim())return false;
+ const m=src.match(/<body[^>]*>([\s\S]*?)(<\/body>|$)/i),b=(m?m[1]:src).replace(/<!--[\s\S]*?-->/g,'');
+ return /<(img|video|audio|iframe|svg|canvas|input|button|table|hr)\b/i.test(b)||b.replace(/<[^>]*>/g,'').replace(/&nbsp;/g,' ').trim()!=='';
+};
 const getCode=(i,l)=>{
  if(shared)return shared[l]||'';
  const v=store.get(codeKey(i,l),null);if(v!==null)return v;
- if(i===3&&l==='h'){const p=store.get(codeKey(0,'h'),'');if(p.trim())return p}
+ if(i===3&&l==='h'){const p=store.get(codeKey(0,'h'),'');if(hasBody(p))return p}
  return starter(i,l);
 };
 function updateGutter(){
