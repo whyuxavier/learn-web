@@ -3,11 +3,13 @@
    отримали нову версію), без мережі або якщо мережа мовчить довше 4 с — збережена копія.
    Шрифт Fixel: кешується вже під час встановлення (з першого відвідування)
    і далі віддається з кешу. */
-const VERSION = '2026-11-09b';
+const VERSION = '2026-11-10';
 const SHELL = 'lw-shell-' + VERSION;   // сторінка, маніфест, іконки
 const ASSETS = 'lw-assets';            // шрифти (переживають оновлення SW)
 const SHELL_FILES = [
   './',
+  'style.css',
+  'script.js',
   'manifest.json',
   'icons/icon-192.png',
   'icons/icon-512.png',
@@ -91,7 +93,10 @@ self.addEventListener('fetch', e => {
       return;
     }
     if (url.pathname.endsWith('/sw.js')) return;
-    e.respondWith(staleWhileRevalidate(req, e));
+    // код курсу (стилі, скрипт) — спершу мережа, щоб нова версія ніколи
+    // не змішувалась зі старою; без мережі — збережена копія
+    if (/\.(css|js)$/.test(url.pathname)) e.respondWith(networkFirst(e));
+    else e.respondWith(staleWhileRevalidate(req, e));
     return;
   }
   if (CACHE_FIRST_HOSTS.test(url.hostname)) {
@@ -114,6 +119,24 @@ async function page(e) {
   const cached = await c.match(PAGE) || await caches.match(PAGE);
   if (cached) return cached;
   return net;   // ще немає копії — чекаємо мережу, як звичайний сайт
+}
+
+async function networkFirst(e) {
+  const c = await caches.open(SHELL);
+  const key = e.request.url.split('?')[0];
+  const net = fetch(key, { cache: 'no-cache' }).then(async r => {
+    if (r.ok) await c.put(key, r.clone());
+    return r;
+  });
+  e.waitUntil(net.catch(() => {}));
+  const timeout = new Promise(res => setTimeout(res, NET_TIMEOUT));
+  try {
+    const r = await Promise.race([net, timeout.then(() => null)]);
+    if (r && r.ok) return r;
+  } catch (err) {}
+  const cached = await c.match(key) || await caches.match(key);
+  if (cached) return cached;
+  return net;
 }
 
 async function cacheFirst(req) {
