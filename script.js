@@ -984,7 +984,7 @@ function renderLesson(){
  chkAll=false;setTimeout(()=>evalChecks(false),0);
  if(cur===0)$('#cpbp').onclick=()=>copyText(BP).then(()=>toast('Структуру скопійовано'),()=>toast('Не вдалося скопіювати'));
 }
-function go(i){if(i<0||i>11)return;cur=i;store.set('cur',i);lang='h';renderNav();renderLesson();loadEditor();preview();closeMenu();window.scrollTo(0,0)}
+function go(i){if(i<0||i>11)return;cur=i;store.set('cur',i);lang='h';renderNav();renderLesson();loadEditor();preview();closeMenu();window.scrollTo(0,0);syncHash()}
 $('#nav').onclick=e=>{const b=e.target.closest('.li');if(!b)return;if(b.dataset.home){closeMenu();showHome()}else go(+b.dataset.i)};
 
 /* ---------- вкладки «Теорія | Завдання» ---------- */
@@ -1017,18 +1017,25 @@ function renderHome(){
    ls.map(([l,i])=>'<button class="ml'+(done.includes(i)?' d':'')+'" data-i="'+i+'"><b>'+(done.includes(i)?CHECK:(i+1))+'</b><span>'+esc(l.t.split('.')[0])+'</span></button>').join('')+'</div>';
  }).join('');
 }
-const isCourse=()=>location.hash==='#course';
+/* окреме посилання на кожен урок: …/learn-web/#urok-3 */
+const LH=i=>'#urok-'+(i+1);
+const hashLesson=()=>{const m=/^#urok-(\d+)$/.exec(location.hash);return m?+m[1]-1:-1};
+const isCourse=()=>location.hash==='#course'||hashLesson()>=0;
+let routed=false;
+function syncHash(){if(routed&&!shared&&isCourse()&&location.hash!==LH(cur))history.replaceState(null,'',location.pathname+location.search+LH(cur))}
 let homeSeen=false;
 function route(){
  if(location.hash.startsWith('#s=')){openShared(location.hash.slice(3));return}
  if(shared){shared=null;document.body.classList.remove('sv');ta.readOnly=false;go(cur)}
+ const h=hashLesson();if(h>=0&&h<=11&&h!==cur)go(h);
+ routed=true;syncHash();
  const c=isCourse();
  document.body.classList.toggle('home',!c);
  snowSync();
  if(!c){renderHome();if(!homeSeen){homeSeen=true;setTimeout(()=>$('.art').classList.add('done'),3800)}}
  window.scrollTo(0,0);
 }
-function openCourse(i){if(i!==undefined&&i!==cur)go(i);if(isCourse())route();else location.hash='course'}
+function openCourse(i){if(i!==undefined&&i!==cur)go(i);if(isCourse())route();else location.hash=LH(cur).slice(1)}
 function showHome(){if(isCourse()||shared)history.pushState(null,'',location.pathname+location.search);route()}
 $('#start').onclick=()=>openCourse();
 $('#mods').onclick=e=>{const b=e.target.closest('.ml');if(b)openCourse(+b.dataset.i)};
