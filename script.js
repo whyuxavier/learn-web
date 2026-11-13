@@ -974,7 +974,7 @@ function renderLesson(){
  '<div class="card"><h2 class="t">Урок '+(cur+1)+'. '+esc(l.t)+'</h2></div>'+
  '<div class="card"><h2>Теорія</h2>'+l.th+'</div>'+
  '<div class="card"><h2>Команди та теги</h2>'+l.cm.map(c=>'<div class="cmd"><code>'+esc(c[0])+'</code><span>'+esc(c[1])+'</span></div>').join('')+'</div>'+
- '<div class="card"><h2>Приклад коду</h2><pre><code>'+esc(l.ex)+'</code></pre></div>'+
+ '<div class="card"><div class="exh"><h2>Приклад коду</h2><button class="btn cpx" id="cpex">Копіювати</button></div><pre><code>'+esc(l.ex)+'</code></pre></div>'+
  '<button class="btn pr tonext" id="toTask">До завдання →</button></div>'+
  '<div class="lp" id="p-tk" role="tabpanel" aria-labelledby="t-tk">'+
  '<div class="card task"><h2>Урок '+(cur+1)+'. Практичне завдання</h2><p><b>'+esc(l.task)+'</b></p><h3 class="sub">Вимоги</h3><ul class="chk">'+
@@ -990,6 +990,7 @@ function renderLesson(){
  $('#lesson .chk').onchange=e=>{const c=+e.target.dataset.c;let a=store.get('chk:'+cur,[]);a=e.target.checked?a.concat(c):a.filter(x=>x!==c);store.set('chk:'+cur,a);evalChecks(true)};
  chkAll=false;setTimeout(()=>evalChecks(false),0);
  if(cur===0)$('#cpbp').onclick=()=>copyText(BP).then(()=>toast('Структуру скопійовано'),()=>toast('Не вдалося скопіювати'));
+ $('#cpex').onclick=()=>copyText(l.ex).then(()=>toast('Приклад скопійовано'),()=>toast('Не вдалося скопіювати'));
 }
 function go(i){if(i<0||i>11)return;cur=i;store.set('cur',i);lang='h';renderNav();renderLesson();loadEditor();preview();closeMenu();window.scrollTo(0,0);syncHash()}
 $('#nav').onclick=e=>{const b=e.target.closest('.li');if(!b)return;if(b.dataset.home){closeMenu();showHome()}else go(+b.dataset.i)};
