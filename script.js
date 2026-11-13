@@ -784,6 +784,13 @@ function copyText(t){
 }
 const tryCopy=(t)=>copyText(t).then(()=>toast('Код скопійовано'),()=>toast('Не вдалося скопіювати'));
 $('#copy').onclick=()=>tryCopy(ta.value);
+/* завантаження поточної вкладки: urok-N.html / .css / .js */
+$('#dl').onclick=()=>{
+ const ext={h:'html',c:'css',j:'js'}[lang],type={h:'text/html',c:'text/css',j:'text/javascript'}[lang];
+ const u=URL.createObjectURL(new Blob([ta.value],{type:type+';charset=utf-8'})),a=document.createElement('a');
+ a.href=u;a.download='urok-'+(cur+1)+'.'+ext;document.body.append(a);a.click();a.remove();
+ setTimeout(()=>URL.revokeObjectURL(u),4000);toast('Файл збережено');
+};
 $('#reset').onclick=()=>{store.del(codeKey(cur,lang));loadEditor();preview();toast('Код скинуто')};
 $('#tabs').onclick=e=>{const b=e.target.closest('.tab');if(b){lang=b.dataset.l;loadEditor()}};
 
@@ -1031,6 +1038,8 @@ function route(){
  routed=true;syncHash();
  const c=isCourse();
  document.body.classList.toggle('home',!c);
+ /* після переходу з головної сторінки перегляд малюємо щойно панель стала видимою */
+ if(c)requestAnimationFrame(()=>{if(isCourse())preview()});
  snowSync();
  if(!c){renderHome();if(!homeSeen){homeSeen=true;setTimeout(()=>$('.art').classList.add('done'),3800)}}
  window.scrollTo(0,0);
