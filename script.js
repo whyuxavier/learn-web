@@ -956,10 +956,10 @@ function checkCtx(){
 function evalChecks(fromEdit){
  if(shared||!$('#lesson .chk'))return;
  flushSave();
- const l=LESSONS[cur],rules=AUTO[cur]||[],man=store.get('chk:'+cur,[]);let x=null,all=true;
+ const l=LESSONS[cur],rules=AUTO[cur]||[],sub=!!store.get('sub:'+cur,0);let x=null,all=true;
  l.ok.forEach((o,i)=>{
-  let a=false;if(rules[i]){x=x||checkCtx();try{a=!!rules[i](x)}catch(e){a=false}}
-  const on=a||man.includes(i),el=$('#lesson .chk input[data-c="'+i+'"]');if(el)el.checked=on;
+  let a=sub;if(rules[i]){a=false;x=x||checkCtx();try{a=!!rules[i](x)}catch(e){a=false}}
+  const on=a,el=$('#lesson .chk input[data-c="'+i+'"]');if(el)el.checked=on;
   if(!isBonus(o)&&!on)all=false;
  });
  if(fromEdit&&all&&!chkAll&&!done.includes(cur)){done=done.concat(cur);store.set('done',done);renderNav();
@@ -968,7 +968,7 @@ function evalChecks(fromEdit){
  chkAll=all;
 }
 function renderLesson(){
- const l=LESSONS[cur],d=done.includes(cur),chk=store.get('chk:'+cur,[]);
+ const l=LESSONS[cur],d=done.includes(cur);
  $('#lesson').innerHTML=
  '<div class="lp" id="p-th" role="tabpanel" aria-labelledby="t-th">'+
  '<div class="card"><h2 class="t">Урок '+(cur+1)+'. '+esc(l.t)+'</h2></div>'+
@@ -978,7 +978,7 @@ function renderLesson(){
  '<button class="btn pr tonext" id="toTask">До завдання →</button></div>'+
  '<div class="lp" id="p-tk" role="tabpanel" aria-labelledby="t-tk">'+
  '<div class="card task"><h2>Урок '+(cur+1)+'. Практичне завдання</h2><p><b>'+esc(l.task)+'</b></p><h3 class="sub">Вимоги</h3><ul class="chk">'+
-  l.ok.map((x,i)=>'<li'+((AUTO[cur]||[])[i]?' title="Перевіряється автоматично"':'')+'><label><input type="checkbox" data-c="'+i+'"'+(chk.includes(i)?' checked':'')+'><span>'+esc(x)+((AUTO[cur]||[])[i]?AUTO_ICON:'')+'</span></label></li>').join('')+'</ul>'+
+  l.ok.map((x,i)=>'<li'+((AUTO[cur]||[])[i]?' title="Перевіряється автоматично"':' title="Зараховується під час здачі роботи"')+'><label><input type="checkbox" data-c="'+i+'" disabled tabindex="-1"><span>'+esc(x)+((AUTO[cur]||[])[i]?AUTO_ICON:'<small class="tcl">після здачі</small>')+'</span></label></li>').join('')+'</ul>'+
  (cur===0?'<button class="btn pr" id="cpbp">Копіювати HTML-структуру</button>':'')+'</div>'+(cur===11?'<div class="qs">'+QUESTS.map(q=>qcard(Object.assign({},q,{d:'Перевір себе: '+q.d}))).join('')+'</div>'+PROMO:'')+
  '<div class="nav"><button class="btn" id="prev"'+(cur?'':' disabled')+'>← Назад</button><span class="sp"></span>'+
  '<button class="btn'+(d?' done':'')+'" id="mark" aria-pressed="'+d+'">'+(d?'Виконано':'Завершити')+'</button>'+
@@ -987,7 +987,6 @@ function renderLesson(){
  $('#toTask').onclick=()=>setTab('tk');
  $('#prev').onclick=()=>go(cur-1);$('#next').onclick=()=>cur===11?showHome():go(cur+1);
  $('#mark').onclick=()=>{done=done.includes(cur)?done.filter(x=>x!==cur):done.concat(cur);store.set('done',done);renderNav();renderLesson();toast(done.includes(cur)?'Урок завершено':'Позначку знято')};
- $('#lesson .chk').onchange=e=>{const c=+e.target.dataset.c;let a=store.get('chk:'+cur,[]);a=e.target.checked?a.concat(c):a.filter(x=>x!==c);store.set('chk:'+cur,a);evalChecks(true)};
  chkAll=false;setTimeout(()=>evalChecks(false),0);
  if(cur===0)$('#cpbp').onclick=()=>copyText(BP).then(()=>toast('Структуру скопійовано'),()=>toast('Не вдалося скопіювати'));
  $('#cpex').onclick=()=>copyText(l.ex).then(()=>toast('Приклад скопійовано'),()=>toast('Не вдалося скопіювати'));
@@ -1050,7 +1049,7 @@ function showHome(){if(isCourse()||shared)history.pushState(null,'',location.pat
 $('#start').onclick=()=>openCourse();
 $('#mods').onclick=e=>{const b=e.target.closest('.ml');if(b)openCourse(+b.dataset.i)};
 $('#toProg').onclick=e=>{e.preventDefault();$('#program').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})};
-$('#logo').onclick=showHome;$('#homeBtn').onclick=showHome;$('#navHome').onclick=()=>{closeMenu();showHome()};
+$('#logo').onclick=showHome;$('#homeBtn').onclick=showHome;
 addEventListener('popstate',route);addEventListener('hashchange',route);
 $('#bonus').innerHTML=bonusHtml();bonusGame();
 function closeMenu(){$('#side').classList.remove('open');$('#menu').setAttribute('aria-expanded','false')}
@@ -1134,7 +1133,7 @@ async function unpack(s){
 const shm=$('#shm');
 function openShare(){
  $('#shl').textContent='Урок '+(cur+1)+'. '+LESSONS[cur].t.split('.')[0];
- $('#shn').value=store.get('name','');$('#shres').hidden=true;shm.hidden=false;$('#shn').focus();
+ $('#shn').value=store.get('name','');$('#shres').hidden=true;$('#shgo').style.display='';shm.hidden=false;$('#shn').focus();
 }
 function closeShare(){shm.hidden=true;$('#share').focus()}
 const mm=$('#mm'),moreB=$('#more');
@@ -1144,7 +1143,7 @@ mm.addEventListener('click',()=>closeMore());
 document.addEventListener('click',e=>{if(!mm.hidden&&!e.target.closest('.more'))closeMore()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!mm.hidden){closeMore();moreB.focus()}});
 $('#share').onclick=openShare;$('#shclose').onclick=closeShare;shm.onclick=e=>{if(e.target===shm)closeShare()};
-$('#shn').oninput=()=>{$('#shres').hidden=true};
+$('#shn').oninput=()=>{$('#shres').hidden=true;$('#shgo').style.display=''};
 $('#shn').onkeydown=e=>{if(e.key==='Enter')$('#shgo').click()};
 $('#shgo').onclick=async()=>{
  const n=$('#shn').value.trim().replace(/\s+/g,' ');
@@ -1152,7 +1151,8 @@ $('#shgo').onclick=async()=>{
  store.set('name',n);
  const o={n,l:cur,d:Date.now(),h:getCode(cur,'h'),c:getCode(cur,'c'),j:getCode(cur,'j')};
  const url=location.origin+location.pathname+'#s='+await pack(o);
- $('#shu').value=url;$('#shres').hidden=false;$('#shu').select();
+ $('#shu').value=url;$('#shres').hidden=false;$('#shgo').style.display='none';$('#shcp').focus();
+ if(!store.get('sub:'+cur,0)){store.set('sub:'+cur,1);evalChecks(true)}
 };
 $('#shcp').onclick=()=>copyText($('#shu').value).then(()=>toast('Посилання скопійовано'),()=>{$('#shu').select();toast('Скопіюй вручну: Ctrl+C')});
 

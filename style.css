@@ -257,6 +257,8 @@ body:not(.home) header,body:not(.home) aside,body:not(.home) .card{backdrop-filt
 .chk input::after{content:"";width:9px;height:5px;border:2.5px solid #fff;border-top:0;border-right:0;transform:rotate(-45deg) translate(1px,-1px);opacity:0}
 .chk input:checked{background:var(--ok);border-color:var(--ok)}.chk input:checked::after{opacity:1}
 .chk input:checked+span{color:var(--mu)}
+.chk label,.chk input{cursor:default}.chk input:disabled{opacity:1}
+.chk .tcl{display:inline-block;margin-left:8px;font-size:12px;color:var(--mu);border:1px solid var(--bd);border-radius:20px;padding:0 7px;vertical-align:1px}
 .chk .ai{width:13px;height:13px;margin-left:6px;vertical-align:-1px;fill:var(--ac);stroke:none;opacity:.7}
 .task .sub{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--mu);margin:16px 0 4px;font-weight:600}
 #homeBtn{display:none!important}
