@@ -25,7 +25,7 @@
  <button class="ib" id="homeBtn" hidden aria-label="На головну" title="На головну"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7M6 9.5V20h12V9.5"/></svg></button>
  <button class="ib sch" id="schB" hidden aria-label="Шкільний режим увімкнено" title="Шкільний режим: прогрес зникне після закриття браузера"><svg viewBox="0 0 24 24"><path d="M3 10l9-5 9 5-9 5z"/><path d="M7 12.5V17c0 1.2 2.2 2.5 5 2.5s5-1.3 5-2.5v-4.5"/></svg></button>
  <button class="ib" id="instB" hidden aria-label="Встановити застосунок" title="Встановити як застосунок"><svg viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M12 7v7M9 11l3 3 3-3M10.5 18.5h3"/></svg></button>
- <button class="ib" id="info" aria-label="Про курс" title="Про курс"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></button>
+ <button class="ib" id="info" aria-label="Панель керування" title="Панель керування"><svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></button>
  <button class="ib" id="theme" aria-label="Змінити тему"></button>
 </header>
 <aside id="side" aria-label="Навігація курсу">
@@ -122,13 +122,12 @@
  <section class="sec" id="program" aria-labelledby="ph"><h3 id="ph">Програма курсу</h3><p>Три модулі: від структури сторінки до інтерактивності. Натисни на урок, щоб відкрити його.</p><div class="mods" id="mods"></div></section>
  <section class="sec" id="quests" aria-labelledby="qh"><h3 id="qh">Ігри й тести</h3><p>Перевір себе після курсу.</p><div class="qs" id="qlist"></div></section>
  <div id="promoHome"></div>
- <section class="sec" aria-labelledby="bh"><h3 id="bh">Бонус</h3><p>Корисні інструменти, безкоштовні відеокурси українською та міні-гра, створена лише на HTML, CSS і JavaScript.</p><div class="hcards" id="bonus"></div></section>
  <footer class="hf"><span>Веб-програмування · HTML, CSS, JavaScript</span><a href="https://github.com/whyuxavier/learn-web" target="_blank" rel="noopener noreferrer">GitHub — whyuxavier/learn-web</a></footer>
 </div>
 </div>
 <div class="modal" id="modal" hidden role="dialog" aria-modal="true" aria-labelledby="mt"><div class="card mc">
 <button class="ib mx" id="mclose" aria-label="Закрити"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
-<h2 id="mt">Про курс</h2>
+<h2 id="mt">Панель керування</h2>
 <p>Курс HTML, CSS і JavaScript: 12 уроків, теорія і практика в браузері.</p>
 <h3>Правила</h3>
 <ul>
@@ -136,6 +135,12 @@
 <li>Прочитай «Теорію», виконай «Завдання» в редакторі.</li>
 <li>Щоб здати роботу: ⋯ → «Здати роботу» → надішли посилання своєму вчителю.</li>
 </ul>
+<h3>Презентації до уроків</h3>
+<p>Усі матеріали зібрав в окремій теці на Всеосвіті. Презентації можна переглянути та придбати як окремо, так і комплектом.</p>
+<a class="btn pr" href="https://vseosvita.ua/user/id2306166/library?id_folder=192294" target="_blank" rel="noopener noreferrer">Переглянути матеріали</a>
+<h3>Бонус</h3>
+<p>Корисні інструменти, безкоштовні відеокурси українською та міні-гра, створена лише на HTML, CSS і JavaScript.</p>
+<div class="hcards" id="bonus"></div>
 <p>Більше теорії: <a href="https://it-osvita.diia.gov.ua/task/item/e79f37cc-9c36-4935-9fdb-439a98d9c485" target="_blank" rel="noopener noreferrer">ІТ-студія Дія</a>.</p>
 <div class="mode"><label class="sw" style="margin-top:0"><span>Підказки в редакторі<small>Теги, властивості й команди під час набору коду</small></span><input type="checkbox" id="acT" role="switch"></label>
 <label class="sw"><span>Шкільний комп'ютер<small>Прогрес зникає після закриття браузера</small></span><input type="checkbox" id="schT" role="switch"></label>

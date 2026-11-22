@@ -884,7 +884,7 @@ function renderNav(){
   if(MOD_OF[i]!==last){last=MOD_OF[i];h+='<div class="mod">'+MODS[last]+'</div>'}
   h+='<button class="li'+(done.includes(i)?' d':'')+'" data-i="'+i+'" aria-current="'+(i===cur)+'"><b>'+CHECK+'</b><span>Урок '+(i+1)+'. '+esc(l.t.split('.')[0])+'</span></button>';
  });
- h+='<div class="mod">Головна</div><button class="li bn" data-home="1"><b>'+STAR+'</b><span>Бонус і програма курсу</span></button>';
+ h+='<div class="mod">Головна</div><button class="li bn" data-panel="1"><b>'+STAR+'</b><span>Панель керування</span></button>';
  $('#nav').innerHTML=h;
  const p=Math.round(done.length/12*100);
  $('#pct').textContent=p+'%';$('#cnt').textContent=done.length+' / 12';
@@ -992,7 +992,7 @@ function renderLesson(){
  $('#cpex').onclick=()=>copyText(l.ex).then(()=>toast('Приклад скопійовано'),()=>toast('Не вдалося скопіювати'));
 }
 function go(i){if(i<0||i>11)return;cur=i;store.set('cur',i);lang='h';renderNav();renderLesson();loadEditor();preview();closeMenu();window.scrollTo(0,0);syncHash()}
-$('#nav').onclick=e=>{const b=e.target.closest('.li');if(!b)return;if(b.dataset.home){closeMenu();showHome()}else go(+b.dataset.i)};
+$('#nav').onclick=e=>{const b=e.target.closest('.li');if(!b)return;if(b.dataset.home){closeMenu();showHome()}else if(b.dataset.panel){closeMenu();openInfo()}else go(+b.dataset.i)};
 
 /* ---------- вкладки «Теорія | Завдання» ---------- */
 const tabs=store.get('ltab',{}),tpos={};let ltab='th';

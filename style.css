@@ -80,7 +80,7 @@ body.sv .lt{visibility:hidden}
 .cmd:first-of-type{border-top:0}.cmd code{flex:0 0 40%;white-space:normal;word-break:break-word}.cmd span{flex:1;font-size:14px}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:grid;place-items:center;z-index:60;padding:16px}
 .modal[hidden]{display:none}.mc{max-width:440px;width:100%;background:var(--sf2);position:relative}.mx{position:absolute;top:10px;right:10px;width:32px;height:32px;min-height:32px}.mc h2{padding-right:36px}
-.mc a{color:var(--ac)}.mc .btn{margin-top:6px}
+.mc a{color:var(--ac)}.mc a.btn{text-decoration:none}.mc .btn{margin-top:6px}
 .fl{display:block;font-size:14px;color:var(--mu);margin:10px 0 4px}
 .fi{width:100%;min-height:40px;padding:8px 12px;border:1px solid var(--bd);border-radius:10px;background:var(--sf);color:var(--tx);font:inherit;font-size:14px}
 .fi:focus{outline:2px solid var(--ac);outline-offset:1px}
