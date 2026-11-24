@@ -250,8 +250,8 @@ function snowSync(){
  s.onerror=()=>{snowState=3;snowBox.remove()};
  document.head.appendChild(s);
 }
-function setTheme(t,manual){document.documentElement.dataset.theme=t;$('#theme').innerHTML=t==='dark'?ICON.sun:ICON.moon;$('#theme').setAttribute('aria-label',t==='dark'?'Увімкнути світлу тему':'Увімкнути темну тему');if(manual)store.set('themeC',t);snowSync()}
-$('#theme').onclick=()=>{setTheme(document.documentElement.dataset.theme==='dark'?'light':'dark',true);preview()};
+function setTheme(t,manual){document.documentElement.dataset.theme=t;$('#theme').innerHTML='<button type="button" data-t="light" aria-pressed="'+(t==='light')+'">'+ICON.sun+'Світла</button><button type="button" data-t="dark" aria-pressed="'+(t==='dark')+'">'+ICON.moon+'Темна</button>';if(manual)store.set('themeC',t);snowSync()}
+$('#theme').onclick=e=>{const b=e.target.closest('button');if(b&&b.dataset.t!==document.documentElement.dataset.theme){setTheme(b.dataset.t,true);preview()}};
 // Темна тема — за замовчуванням; світла лише якщо учень сам її обрав (themeC).
 setTheme(store.get('themeC','dark')==='light'?'light':'dark');
 
@@ -882,12 +882,11 @@ function renderNav(){
  let h='',last=-1;
  LESSONS.forEach((l,i)=>{
   if(MOD_OF[i]!==last){last=MOD_OF[i];h+='<div class="mod">'+MODS[last]+'</div>'}
-  h+='<button class="li'+(done.includes(i)?' d':'')+'" data-i="'+i+'" aria-current="'+(i===cur)+'"><b>'+CHECK+'</b><span>Урок '+(i+1)+'. '+esc(l.t.split('.')[0])+'</span></button>';
+  h+='<button class="li'+(done.includes(i)?' d':'')+'" data-i="'+i+'" aria-current="'+(i===cur)+'"><b>'+CHECK+'</b><span>'+(i+1)+'. '+esc(l.t.split('.')[0])+'</span></button>';
  });
- h+='<div class="mod">Головна</div><button class="li bn" data-panel="1"><b>'+STAR+'</b><span>Панель керування</span></button>';
  $('#nav').innerHTML=h;
  const p=Math.round(done.length/12*100);
- $('#pct').textContent=p+'%';$('#cnt').textContent=done.length+' / 12';
+ $('#pct').textContent=p+'%';$('#cnt').textContent='Пройдено '+done.length+' з 12';
  $('#pbar').firstElementChild.style.width=p+'%';$('#pbar').setAttribute('aria-valuenow',p);
 }
 /* ---------- Автоперевірка вимог «Перевір себе» ----------
@@ -992,7 +991,7 @@ function renderLesson(){
  $('#cpex').onclick=()=>copyText(l.ex).then(()=>toast('Приклад скопійовано'),()=>toast('Не вдалося скопіювати'));
 }
 function go(i){if(i<0||i>11)return;cur=i;store.set('cur',i);lang='h';renderNav();renderLesson();loadEditor();preview();closeMenu();window.scrollTo(0,0);syncHash()}
-$('#nav').onclick=e=>{const b=e.target.closest('.li');if(!b)return;if(b.dataset.home){closeMenu();showHome()}else if(b.dataset.panel){closeMenu();openInfo()}else go(+b.dataset.i)};
+$('#nav').onclick=e=>{const b=e.target.closest('.li');if(!b)return;hideSide();go(+b.dataset.i)};
 
 /* ---------- вкладки «Теорія | Завдання» ---------- */
 const tabs=store.get('ltab',{}),tpos={};let ltab='th';
@@ -1052,6 +1051,8 @@ $('#toProg').onclick=e=>{e.preventDefault();$('#program').scrollIntoView({behavi
 $('#logo').onclick=showHome;$('#homeBtn').onclick=showHome;
 addEventListener('popstate',route);addEventListener('hashchange',route);
 $('#bonus').innerHTML=bonusHtml();bonusGame();
+/* після вибору уроку меню ховається й на ПК; відкрити знову — кнопкою ☰ */
+function hideSide(){if(!matchMedia('(max-width:1100px)').matches&&!ui.side){ui.side=true;store.set('ui',ui);applyUI();$('#menu').setAttribute('aria-expanded','false')}}
 function closeMenu(){$('#side').classList.remove('open');$('#menu').setAttribute('aria-expanded','false')}
 const ui=store.get('ui',{});
 function applyUI(){
@@ -1066,6 +1067,10 @@ $('#menu').onclick=()=>{
  if(matchMedia('(max-width:1100px)').matches){const o=$('#side').classList.toggle('open');$('#menu').setAttribute('aria-expanded',o)}
  else{ui.side=!ui.side;store.set('ui',ui);applyUI();$('#menu').setAttribute('aria-expanded',!ui.side)}
 };
+function setFs(v){v=[1,1.15,1.3].includes(+v)?+v:1;document.documentElement.style.setProperty('--fs',v);store.set('fs',v);
+ document.querySelectorAll('#fsz button').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.v===v))}
+$('#fsz').onclick=e=>{const b=e.target.closest('button');if(b)setFs(b.dataset.v)};
+setFs(store.get('fs',1));
 const modal=$('#modal');
 function openInfo(){modal.hidden=false;$('#mclose').focus()}
 function closeInfo(){modal.hidden=true;$('#info').focus()}
