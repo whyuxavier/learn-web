@@ -245,7 +245,7 @@ function snowSync(){
  if(snowState===1)return;
  snowState=1;
  const s=document.createElement('script');s.src='snow.js';s.async=true;
- s.onload=()=>{try{snowCtl=window.PixelSnow&&PixelSnow.mount(snowBox,{color:'#ece8ff',density:.35,opacity:.75,dpr:document.documentElement.classList.contains('lite')?1:0})}catch(e){snowCtl=null}
+ s.onload=()=>{try{snowCtl=window.PixelSnow&&PixelSnow.mount(snowBox,{color:'#ece8ff',density:.15,opacity:.75,dpr:document.documentElement.classList.contains('lite')?1:0})}catch(e){snowCtl=null}
   snowState=snowCtl?2:3;if(!snowCtl)snowBox.remove();else snowSync()};
  s.onerror=()=>{snowState=3;snowBox.remove()};
  document.head.appendChild(s);
